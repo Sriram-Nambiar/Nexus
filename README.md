@@ -14,6 +14,14 @@ NEXUS AI is an autonomous, air-gapped educational platform designed to run on lo
 
 ---
 
+## 🎥 Video Demonstration
+
+[![Watch NEXUS AI Full Demo Walkthrough](https://img.youtube.com/vi/7Su_N0dR7iY/maxresdefault.jpg)](https://youtu.be/7Su_N0dR7iY)
+
+> 🎬 **Watch the full live demo on YouTube**: [https://youtu.be/7Su_N0dR7iY](https://youtu.be/7Su_N0dR7iY) — showcasing 1-to-many Kiwix Offspot hotspot sharing, zero-buffering HTTP 206 video streaming, and local Gemma 4 AI tutoring.
+
+---
+
 ## 🌟 Core Pillars & Key Features
 
 ### 1. 🔒 100% Data Privacy & Zero Cloud Exfiltration
