@@ -63,9 +63,22 @@ export function seedDatabase(): void {
     'Week 1 Lecture 2 - Supervised Learning | Machine Learning- Balaraman Ravindran',
     'Supervised learning definitions, training sets, loss functions. Accessible offline on local Kiwix hotspot server (or online at https://youtu.be/OTAR0kT1swg?si=1BkIj5iO7gYzKiRD).',
     'video',
-    'demo_ml_lecture.mp4',
+    'supervised_learning_lecture.mp4',
     'video/mp4',
-    getFileSize('demo_ml_lecture.mp4'),
+    getFileSize('supervised_learning_lecture.mp4'),
+    now
+  );
+
+  // Demo Kiwix ZIM 1: ML NPTEL Supervised Learning Kiwix Package
+  insertResource.run(
+    'res_zim_ml_nptel',
+    'crs_ml_nptel',
+    'Kiwix ZIM Package: Week 1 Lecture 2 Supervised Learning',
+    'Complete offline ZIM archive containing NPTEL Supervised Learning video lecture and interactive notes formatted for Kiwix offline distribution hotspot.',
+    'other',
+    'Week_1_Lecture_2_Supervised_Learning.zim',
+    'application/x-zim',
+    getFileSize('Week_1_Lecture_2_Supervised_Learning.zim'),
     now
   );
 
@@ -82,16 +95,16 @@ export function seedDatabase(): void {
     now
   );
 
-  // Demo Video 2: OS Deadlocks
+  // Demo Video 2: OS Deadlocks (Supervised Learning NPTEL Lecture)
   insertResource.run(
     'res_os_video_deadlocks',
     'crs_os_deadlocks',
-    'Operating Systems: Deadlocks, Prevention, and Bankers Algorithm',
-    'Detailed breakdown of Coffman conditions, circular waits, and Bankers algorithm for deadlock avoidance in multi-process systems.',
+    'Operating Systems: Deadlocks & Supervised Resource Allocation',
+    'Detailed breakdown of Coffman conditions and resource allocation with NPTEL lecture video stream.',
     'video',
-    'demo_os_deadlocks.mp4',
+    'supervised_learning_lecture.mp4',
     'video/mp4',
-    getFileSize('demo_os_deadlocks.mp4'),
+    getFileSize('supervised_learning_lecture.mp4'),
     now
   );
 
