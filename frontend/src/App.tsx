@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AppProvider } from './context/AppContext';
 import { AppLayout } from './components/layout/AppLayout';
+import { LandingPage } from './pages/LandingPage';
 import { DashboardPage } from './pages/DashboardPage';
 import { CoursesPage } from './pages/CoursesPage';
 import { CourseDetailPage } from './pages/CourseDetailPage';
@@ -15,7 +16,8 @@ export function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<AppLayout />}>
-            <Route index element={<DashboardPage />} />
+            <Route index element={<LandingPage />} />
+            <Route path="dashboard" element={<DashboardPage />} />
             <Route path="courses" element={<CoursesPage />} />
             <Route path="courses/:id" element={<CourseDetailPage />} />
             <Route path="search" element={<SearchPage />} />
