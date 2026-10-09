@@ -11,6 +11,8 @@ uploads/
 *.sqlite
 *.sqlite-wal
 *.sqlite-shm
+*.mp4
+*.webm
 
 # Environment & credentials
 .env

@@ -4,16 +4,22 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <title>NEXUS AI — Offline Campus Learning Platform</title>
-    <meta name="description" content="Offline-first university productivity platform for accessing locally hosted educational resources, asking AI questions, and planning revision." />
-    <meta name="theme-color" content="#090a0f" />
+    <meta name="description" content="Neo-Brutalist offline-first university productivity platform for accessing locally hosted educational resources, asking AI questions, and planning revision." />
+    <!-- Official Fontshare CDN for Cabinet Grotesk and Satoshi -->
+    <link rel="preconnect" href="https://api.fontshare.com">
+    <link href="https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@800,700,500,400&f[]=satoshi@700,500,400&display=swap" rel="stylesheet">
     <style>
       html, body {
-        background-color: #090a0f;
-        color: #f3f4f6;
+        background-color: #171e19;
+        color: #000000;
+        font-family: 'Satoshi', system-ui, -apple-system, sans-serif;
+      }
+      h1, h2, h3, h4, h5, h6, .font-heading {
+        font-family: 'Cabinet Grotesk', system-ui, -apple-system, sans-serif;
       }
     </style>
   </head>
-  <body class="bg-zinc-950 text-zinc-100 min-h-screen">
+  <body class="bg-[#171e19] text-black min-h-screen selection:bg-[#ffe17c] selection:text-black">
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>

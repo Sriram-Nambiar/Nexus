@@ -2,35 +2,182 @@
 
 @layer base {
   :root {
-    color-scheme: dark;
+    --primary-yellow: #ffe17c;
+    --charcoal-bg: #171e19;
+    --sage-accent: #b7c6c2;
+    --dark-gray: #272727;
+    --problem-bg: #f4f4f5;
+  }
+
+  html {
+    scroll-behavior: smooth;
   }
 
   body {
-    background-color: #0b0c0e;
-    color: #f3f4f6;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    background-color: #171e19;
+    color: #000000;
+    font-family: 'Satoshi', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-weight: 500;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     min-height: 100vh;
     margin: 0;
   }
+
+  h1, h2, h3, h4, h5, h6, .font-heading {
+    font-family: 'Cabinet Grotesk', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-weight: 800;
+    letter-spacing: -0.04em;
+  }
 }
 
-/* Custom scrollbars for dark mode */
+/* 32px x 32px radial dot pattern (10% opacity) on primary yellow backgrounds */
+.bg-radial-dots {
+  background-color: #ffe17c;
+  background-image: radial-gradient(rgba(0, 0, 0, 0.12) 2px, transparent 2px);
+  background-size: 32px 32px;
+}
+
+/* Outline keyword text stroke */
+.text-stroke-black {
+  -webkit-text-stroke: 2px #000000;
+  color: transparent;
+}
+@media (min-width: 768px) {
+  .text-stroke-black {
+    -webkit-text-stroke: 3.5px #000000;
+    color: transparent;
+  }
+}
+
+/* Neo-Brutalist Hard Shadows (0 blur) */
+.shadow-hard-sm {
+  box-shadow: 2px 2px 0px 0px #000000;
+}
+.shadow-hard-md {
+  box-shadow: 4px 4px 0px 0px #000000;
+}
+.shadow-hard-lg {
+  box-shadow: 8px 8px 0px 0px #000000;
+}
+.shadow-hard-xl {
+  box-shadow: 12px 12px 0px 0px #000000;
+}
+
+/* Neo-Brutalist Interactive Push Buttons */
+.neo-btn-primary {
+  background-color: #000000;
+  color: #ffffff;
+  padding: 0.875rem 1.75rem;
+  border: 2px solid #000000;
+  border-radius: 0.75rem;
+  box-shadow: 8px 8px 0px 0px #000000;
+  font-family: 'Satoshi', sans-serif;
+  font-weight: 700;
+  transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+.neo-btn-primary:hover {
+  transform: translate(4px, 4px);
+  box-shadow: 4px 4px 0px 0px #000000;
+}
+.neo-btn-primary:active {
+  transform: translate(8px, 8px);
+  box-shadow: 0px 0px 0px 0px #000000;
+}
+
+.neo-btn-secondary {
+  background-color: #ffffff;
+  color: #000000;
+  padding: 0.875rem 1.75rem;
+  border: 2px solid #000000;
+  border-radius: 0.75rem;
+  box-shadow: 4px 4px 0px 0px #000000;
+  font-family: 'Satoshi', sans-serif;
+  font-weight: 700;
+  transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+.neo-btn-secondary:hover {
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0px 0px #000000;
+}
+.neo-btn-secondary:active {
+  transform: translate(4px, 4px);
+  box-shadow: 0px 0px 0px 0px #000000;
+}
+
+.neo-btn-yellow {
+  background-color: #ffe17c;
+  color: #000000;
+  padding: 0.75rem 1.5rem;
+  border: 2px solid #000000;
+  border-radius: 0.75rem;
+  box-shadow: 4px 4px 0px 0px #000000;
+  font-family: 'Satoshi', sans-serif;
+  font-weight: 700;
+  transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+.neo-btn-yellow:hover {
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0px 0px #000000;
+}
+.neo-btn-yellow:active {
+  transform: translate(4px, 4px);
+  box-shadow: 0px 0px 0px 0px #000000;
+}
+
+/* Asymmetric corner rounding for Testimonials: Top-Right & Bottom-Left 3xl (24px), Top-Left & Bottom-Right 2px */
+.neo-asymmetric-card {
+  border: 2px solid #000000;
+  border-radius: 2px 24px 2px 24px;
+  box-shadow: 6px 6px 0px 0px #000000;
+}
+
+/* Continuous Marquee Animation */
+@keyframes marqueeScroll {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+.animate-marquee {
+  display: flex;
+  width: max-content;
+  animation: marqueeScroll 25s linear infinite;
+}
+.animate-marquee:hover {
+  animation-play-state: paused;
+}
+
+/* Custom Neo-Brutalist scrollbars */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 10px;
+  height: 10px;
 }
-
 ::-webkit-scrollbar-track {
-  background: #111215;
+  background: #171e19;
+  border-left: 2px solid #000000;
 }
-
 ::-webkit-scrollbar-thumb {
-  background: #27272a;
-  border-radius: 4px;
+  background: #ffe17c;
+  border: 2px solid #000000;
 }
-
 ::-webkit-scrollbar-thumb:hover {
-  background: #3f3f46;
+  background: #b7c6c2;
 }
