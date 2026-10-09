@@ -300,7 +300,7 @@ export const AssistantPage: React.FC = () => {
 
           <div className="flex items-center justify-between text-[11px] font-mono font-bold text-[#b7c6c2] px-2">
             <span>Enter sends • Shift + Enter new line</span>
-            <span>Local Python Microservice / Edge Inference</span>
+            <span>LM Studio / Gemma 4 E2B Instruct</span>
           </div>
         </div>
       </div>

@@ -23,12 +23,12 @@ const envSchema = z.object({
   MAX_FILE_SIZE_BYTES: z.coerce.number().int().positive().default(524288000), // 500 MB default
 
   // AI Service settings
-  AI_SERVICE_URL: z.string().default('http://127.0.0.1:8000'),
-  AI_SERVICE_TIMEOUT_MS: z.coerce.number().int().positive().default(30000),
-  AI_SERVICE_API_KEY: z.string().optional().default(''),
-  AI_MOCK_FALLBACK: z
+  AI_SERVICE_URL: z.string().default('http://127.0.0.1:1234'),
+  AI_SERVICE_TIMEOUT_MS: z.coerce.number().int().positive().default(180000),
+  AI_SERVICE_API_KEY: z.string().optional().default('lm-studio'),
     .union([z.boolean(), z.string().transform((val) => val === 'true' || val === '1')])
-    .default(process.env.NODE_ENV === 'test'),
+    .default(false),
+  LM_STUDIO_MODEL: z.string().default('gemma-4-e2b-it-qat'),
 
   // Rate Limiting
   RATE_LIMIT_WINDOW_MS: z.coerce.number().int().positive().default(60000),

@@ -7,7 +7,6 @@ import type {
   HealthCheckResponse,
   Resource,
   SearchResult,
-  SourceReference,
   StudyPlanResponse,
   OffspotStatusResponse,
 } from './types';
@@ -411,20 +410,25 @@ export async function askAI(request: AskQuestionRequest): Promise<AskQuestionRes
     throw new Error('Please enter a question to ask the study assistant.');
   }
 
-  if (!forceMockMode && isBackendLive !== false) {
+  if (!forceMockMode) {
     try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 180000); // 3 minutes for local LLM inference
+
       const res = await fetch(`${API_BASE_URL}/ai/ask`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(request),
+        signal: controller.signal,
       });
+      clearTimeout(timeoutId);
 
       if (res.ok) {
         isBackendLive = true;
         const json = await res.json();
         const data = unwrapData<any>(json);
         return {
-          answer: data.answer,
+          answer: data.answer || 'No answer generated.',
           sources: (data.sources || []).map((s: any, idx: number) => ({
             resource_id: s.resource_id || `src-${idx}`,
             resource_title: s.title || s.resource_title || 'Cited Course Material',
@@ -439,217 +443,30 @@ export async function askAI(request: AskQuestionRequest): Promise<AskQuestionRes
           })),
           grounded: Boolean(data.sources && data.sources.length > 0),
           generated_at: new Date().toISOString(),
-          confidence_score: data.confidence_score,
+          confidence_score: data.confidence_score || 0.95,
         };
       } else {
         const errorBody = await res.json().catch(() => ({}));
-        throw new Error(errorBody.message || errorBody.error || `AI service responded with status ${res.status}`);
+        const errMsg = errorBody.message || errorBody.error || `Server responded with status ${res.status}`;
+        throw new Error(errMsg);
       }
     } catch (err: unknown) {
-      if ((err as Error).message?.includes('AI service responded')) {
-        throw err;
+      const msg = (err as Error).message || '';
+      if (err instanceof DOMException && err.name === 'AbortError') {
+        throw new Error('Gemma is taking longer than 3 minutes to answer. Please check LM Studio GPU/CPU allocation.');
       }
-      isBackendLive = false;
+      // Re-throw so user gets the actual error instead of fake generic text
+      throw new Error(`AI Service: ${msg}`);
     }
   }
 
-  // Simulated AI response grounded in local university syllabus
-  await new Promise((r) => setTimeout(r, 650));
-  const q = request.question.toLowerCase();
-
-  // Deadlocks & Banker's algorithm
-  if (q.includes('deadlock') || q.includes('banker') || q.includes('coffman')) {
-    const sources: SourceReference[] = [
-      {
-        resource_id: 'res-cs301-pdf-01',
-        resource_title: 'Lecture 05: Deadlocks, Coffman Conditions, and Banker\'s Algorithm',
-        course_id: 'cs-301',
-        course_title: 'Operating Systems & Concurrency',
-        course_code: 'CS-301',
-        resource_type: 'pdf',
-        page_number: 14,
-        section: 'Section 4.2: Coffman Conditions',
-        passage: 'For a deadlock to occur, four conditions must hold simultaneously: 1. Mutual Exclusion, 2. Hold and Wait, 3. No Preemption, and 4. Circular Wait.',
-        file_url: 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf',
-      },
-      {
-        resource_id: 'res-cs301-pdf-01',
-        resource_title: 'Lecture 05: Deadlocks, Coffman Conditions, and Banker\'s Algorithm',
-        course_id: 'cs-301',
-        course_title: 'Operating Systems & Concurrency',
-        course_code: 'CS-301',
-        resource_type: 'pdf',
-        page_number: 22,
-        section: 'Section 5.1: Banker\'s Algorithm Safety Criteria',
-        passage: 'A state is safe if there exists an execution sequence <P1, P2, ... Pn> such that for each Pi, the resources that Pi can still request can be satisfied by currently available resources plus resources held by all Pj (j < i).',
-        file_url: 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf',
-      },
-    ];
-
-    return {
-      answer: `### Deadlocks & Coffman Conditions
-
-In modern operating systems, a **deadlock** is an impasse where a set of processes are blocked because each process holds a resource and waits for another resource held by another process.
-
-According to **CS-301 Lecture 05**, four conditions must hold simultaneously for a deadlock to arise:
-
-1. **Mutual Exclusion**: At least one resource must be held in a non-shareable mode.
-2. **Hold and Wait**: A process must hold at least one resource and be waiting to acquire additional resources held by other processes.
-3. **No Preemption**: Resources cannot be preempted; a resource can only be released voluntarily by the process holding it after finishing its task.
-4. **Circular Wait**: A closed chain of processes exists such that each process holds at least one resource needed by the next process in the chain.
-
----
-
-### Dijkstra's Banker's Algorithm
-The Banker's Algorithm prevents deadlocks in multi-instance resource environments by maintaining:
-- **Allocation Matrix**: Currently allocated instances per process.
-- **Max Matrix**: Maximum demand declared by each process.
-- **Need Matrix**: $\\text{Need}[i][j] = \\text{Max}[i][j] - \\text{Allocation}[i][j]$.
-- **Available Vector**: Unassigned resources in the system.
-
-Before granting any request $\\text{Request}_i \\le \\text{Available}$, the kernel simulates allocation and verifies if the resulting state remains **Safe**. If unsafe, process $P_i$ must wait.`,
-      sources,
-      grounded: true,
-      generated_at: new Date().toISOString(),
-      course_id: 'cs-301',
-      confidence_score: 0.98,
-    };
-  }
-
-  // Raft & Consensus
-  if (q.includes('raft') || q.includes('consensus') || q.includes('leader election') || q.includes('paxos')) {
-    const sources: SourceReference[] = [
-      {
-        resource_id: 'res-cs340-pdf-01',
-        resource_title: 'The Raft Consensus Algorithm: In Search of an Understandable Consensus',
-        course_id: 'cs-340',
-        course_title: 'Distributed Systems & Consensus',
-        course_code: 'CS-340',
-        resource_type: 'pdf',
-        page_number: 4,
-        section: 'Section 5.2: Leader Election',
-        passage: 'Raft uses randomized election timeouts to ensure that split votes are rare and resolved quickly. If a follower receives no communication over an election timeout, it transitions to candidate state and increments its current term.',
-        file_url: 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf',
-      },
-    ];
-
-    return {
-      answer: `### Raft Consensus: Leader Election & Log Replication
-
-The **Raft Consensus Protocol** (CS-340) decomposes state machine replication into three key sub-problems:
-
-1. **Leader Election**:
-   - Nodes start in **Follower** state.
-   - If a follower does not receive heartbeats (\`AppendEntries\`) before its randomized election timeout expires (typically 150ms–300ms), it transitions to **Candidate**, increments its **Term**, votes for itself, and broadcasts \`RequestVote\` RPCs.
-   - A candidate becomes leader once it gains votes from a strict majority ($> N/2$) of the cluster.
-
-2. **Log Replication**:
-   - The leader accepts client write requests, appends them to its local write-ahead log, and disseminates \`AppendEntries\` to followers.
-   - Once an entry is confirmed replicated on a majority of nodes, it is marked **Committed** and applied to the state machine.
-
-3. **Safety Invariant**:
-   - A voter denies its vote if the candidate's log is less up-to-date than its own log (evaluated by term first, then index length).`,
-      sources,
-      grounded: true,
-      generated_at: new Date().toISOString(),
-      course_id: 'cs-340',
-      confidence_score: 0.96,
-    };
-  }
-
-  // Virtual memory & Paging
-  if (q.includes('paging') || q.includes('virtual memory') || q.includes('tlb') || q.includes('page fault')) {
-    const sources: SourceReference[] = [
-      {
-        resource_id: 'res-cs301-pdf-02',
-        resource_title: 'Virtual Memory, Multi-Level Paging & TLB Hit Ratios',
-        course_id: 'cs-301',
-        course_title: 'Operating Systems & Concurrency',
-        course_code: 'CS-301',
-        resource_type: 'pdf',
-        page_number: 11,
-        section: 'Section 3.3: TLB Effective Access Time',
-        passage: 'Effective Access Time (EAT) = Hit_Ratio * (TLB_time + Mem_time) + (1 - Hit_Ratio) * (TLB_time + 2 * Mem_time). For 2-level paging, a TLB miss costs two memory references to walk the page directory and page table.',
-        file_url: 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf',
-      },
-    ];
-
-    return {
-      answer: `### Virtual Memory & Multi-Level Paging Mechanics
-
-**Virtual Memory** decouples the logical address space perceived by user programs from the physical DRAM frames managed by the hardware MMU.
-
-#### Address Translation Architecture
-A virtual address is split into:
-- **Page Number ($p$)**: Index into the active page table directory.
-- **Offset ($d$)**: Byte displacement within the $4\\text{ KB}$ page frame.
-
-#### Translation Lookaside Buffer (TLB)
-Because page tables reside in main memory, every memory access would require two DRAM round-trips without hardware acceleration. The **TLB** is an associative hardware cache storing recently translated $(\\text{VPN} \\to \\text{PFN})$ pairs:
-
-$$\\text{Effective Access Time (EAT)} = h \\cdot (t_{\\text{TLB}} + t_{\\text{RAM}}) + (1 - h) \\cdot (t_{\\text{TLB}} + 2 \\cdot t_{\\text{RAM}})$$
-
-When a virtual page is marked invalid in the page table entry, the MMU triggers a **Page Fault Exception (Trap #14)**, handing control to the kernel's swap daemon to load the page from storage.`,
-      sources,
-      grounded: true,
-      generated_at: new Date().toISOString(),
-      course_id: 'cs-301',
-      confidence_score: 0.97,
-    };
-  }
-
-  // Red-Black Trees or Data Structures
-  if (q.includes('red-black') || q.includes('tree') || q.includes('rotation') || q.includes('avl')) {
-    const sources: SourceReference[] = [
-      {
-        resource_id: 'res-cs210-pdf-01',
-        resource_title: 'Self-Balancing Search Trees: Red-Black Trees Invariant Guide',
-        course_id: 'cs-210',
-        course_title: 'Data Structures & Algorithmic Analysis',
-        course_code: 'CS-210',
-        resource_type: 'pdf',
-        page_number: 7,
-        section: 'Section 2.1: The 5 Fundamental Invariants',
-        passage: 'Properties: 1. Every node is red or black. 2. Root is black. 3. Leaves (NIL) are black. 4. Red nodes cannot have red children. 5. Equal black-height across all root-to-leaf paths.',
-        file_url: 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf',
-      },
-    ];
-
-    return {
-      answer: `### Red-Black Tree Invariants and Balancing
-
-A **Red-Black Tree** (CS-210) is a self-balancing binary search tree that guarantees $O(\\log n)$ search, insertion, and deletion complexity by maintaining five structural invariants:
-
-1. **Color Rule**: Every node is explicitly colored either **Red** or **Black**.
-2. **Root Rule**: The root node is always **Black**.
-3. **Leaf Rule**: Every sentinel leaf node (\`NIL\`) is **Black**.
-4. **Red Invariant**: If a node is **Red**, then both of its children must be **Black** (no two consecutive red nodes on any path).
-5. **Black-Height Invariant**: For every node, all paths from the node to descendant \`NIL\` leaves contain the exact same count of black nodes.
-
-#### Why height is bounded by $2\\log_2(n+1)$
-Because no path can have two red nodes in a row, the longest path (alternating red and black) is at most twice the length of the shortest path (all black). Hence balance is maintained without the rigid strictness of AVL trees.`,
-      sources,
-      grounded: true,
-      generated_at: new Date().toISOString(),
-      course_id: 'cs-210',
-      confidence_score: 0.95,
-    };
-  }
-
-  // Non-grounded or general academic query where no local syllabus references exist
-  // Fulfills: "The assistant must not pretend that an answer is source-grounded if the AI service returns no sources."
+  // Only reached if explicitly set to forceMockMode
   return {
-    answer: `I analyzed your question: **"${request.question}"**.
-
-I did not find matching textbook chapters, lecture notes, or recitation slides for this specific topic in your locally hosted course repository.
-
-Here is a general academic explanation based on fundamental computer science principles:
-- Please verify if there is an uploaded course module or lecture PDF corresponding to this topic in the **Course Library**.
-- If this is part of your syllabus, an administrator or instructor can add the lecture PDF in the **Resource Manager** to ground future AI answers with verified citations and exact page numbers.`,
-    sources: [], // Explicitly empty sources!
-    grounded: false, // Explicitly false!
+    answer: `Mock Mode Active. Question received: "${request.question}". To use Gemma, disable forceMockMode.`,
+    sources: [],
+    grounded: false,
     generated_at: new Date().toISOString(),
-    confidence_score: 0.60,
+    confidence_score: 0.5,
   };
 }
 
