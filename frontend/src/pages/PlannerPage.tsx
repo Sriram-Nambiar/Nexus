@@ -3,20 +3,18 @@ import { useSearchParams } from 'react-router-dom';
 import type { Course, StudyPlanResponse, StudyPlanDay, StudyPlanTask } from '../api/types';
 import { getCourses, generateStudyPlan, saveStudyPlan, getSavedStudyPlans, getResourceById } from '../api';
 import { useApp } from '../context';
-import { Card } from '../components/common/Card';
 import { Button } from '../components/common/Button';
-import { Badge } from '../components/common/Badge';
 import { LoadingSpinner } from '../components/common/LoadingSpinner';
 import { EmptyState } from '../components/common/EmptyState';
 import {
   CalendarDays,
   CheckCircle2,
   Circle,
-  Clock,
   Save,
   Check,
   Sparkles,
   AlertCircle,
+  BookOpen,
 } from 'lucide-react';
 
 export const PlannerPage: React.FC = () => {
@@ -42,7 +40,6 @@ export const PlannerPage: React.FC = () => {
   const [saveSuccess, setSaveSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Load courses
   useEffect(() => {
     let isMounted = true;
     getCourses().then((data) => {
@@ -137,301 +134,319 @@ export const PlannerPage: React.FC = () => {
   const progressPercent = totalTasksCount > 0 ? Math.round((completedTasksCount / totalTasksCount) * 100) : 0;
 
   return (
-    <div className="max-w-6xl mx-auto px-4 sm:px-6 py-6 sm:py-8 space-y-8">
-      {/* Page Header */}
-      <div>
-        <h2 className="text-xl sm:text-2xl font-bold text-white tracking-tight flex items-center gap-2">
-          Study Revision Planner
-          <span className="text-xs font-mono font-medium px-2 py-0.5 rounded bg-zinc-800 text-zinc-300 border border-zinc-700">
-            Structured Tasks
-          </span>
-        </h2>
-        <p className="text-xs text-zinc-400 mt-1">
-          Formulate multi-day milestone revision timetables directly integrated with locally indexed course materials.
-        </p>
-      </div>
+    <div className="min-h-screen bg-[#171e19] py-8 px-4 sm:px-8">
+      <div className="max-w-6xl mx-auto space-y-8">
+        {/* Banner: Neo-Brutalist #ffe17c with Radial Dots */}
+        <div className="bg-[#ffe17c] bg-radial-dots border-2 border-black rounded-2xl p-6 sm:p-8 shadow-hard-lg">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+            <div className="space-y-2">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-black text-[#ffe17c] text-xs font-bold border-2 border-black shadow-hard-sm">
+                <CalendarDays className="w-3.5 h-3.5" />
+                <span>EXAM SYNC ENGINE</span>
+              </div>
+              <h1 className="font-heading text-3xl sm:text-5xl font-extrabold text-black tracking-tight">
+                Study Revision Planner
+              </h1>
+              <p className="text-sm sm:text-base text-black/85 font-medium max-w-2xl leading-relaxed">
+                Formulate multi-day milestone revision timetables directly integrated with locally indexed course materials.
+              </p>
+            </div>
+          </div>
+        </div>
 
-      {/* Plan Creator Form */}
-      <Card className="p-5 sm:p-6 bg-zinc-900/90 border-zinc-800 space-y-5">
-        <h3 className="text-sm font-semibold text-zinc-200 uppercase tracking-wider font-mono">
-          Configure Revision Parameters
-        </h3>
+        {/* Plan Creator Form */}
+        <div className="bg-white border-2 border-black rounded-xl p-6 sm:p-8 shadow-hard-md space-y-6">
+          <h2 className="font-heading text-lg font-extrabold text-black uppercase tracking-wider">
+            Configure Revision Parameters
+          </h2>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-          {/* Goal / Topic Input */}
-          <div className="space-y-1.5">
-            <label className="text-xs font-medium text-zinc-300 block">
-              Exam Target or Subject Goal
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Goal / Topic Input */}
+            <div className="space-y-2">
+              <label className="text-xs font-bold text-black uppercase tracking-wider block">
+                Exam Target or Subject Goal
+              </label>
+              <input
+                type="text"
+                value={goal}
+                onChange={(e) => setGoal(e.target.value)}
+                placeholder="e.g. Operating Systems End-Term, Raft Consensus Revision"
+                className="w-full px-4 py-3 bg-[#f4f4f5] border-2 border-black rounded-xl text-sm font-bold text-black focus:outline-none shadow-hard-sm"
+              />
+            </div>
+
+            {/* Timeframe & Hours */}
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <label className="text-xs font-bold text-black uppercase tracking-wider block">
+                  Total Days
+                </label>
+                <select
+                  value={daysCount}
+                  onChange={(e) => setDaysCount(Number(e.target.value))}
+                  className="w-full px-4 py-3 bg-[#f4f4f5] border-2 border-black rounded-xl text-xs font-bold text-black focus:outline-none shadow-hard-sm cursor-pointer"
+                >
+                  <option value={3}>3 Days (Crash Prep)</option>
+                  <option value={4}>4 Days (Intensive)</option>
+                  <option value={7}>7 Days (Full Week)</option>
+                  <option value={14}>14 Days (Comprehensive)</option>
+                </select>
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-xs font-bold text-black uppercase tracking-wider block">
+                  Hours / Day
+                </label>
+                <select
+                  value={hoursPerDay}
+                  onChange={(e) => setHoursPerDay(Number(e.target.value))}
+                  className="w-full px-4 py-3 bg-[#f4f4f5] border-2 border-black rounded-xl text-xs font-bold text-black focus:outline-none shadow-hard-sm cursor-pointer"
+                >
+                  <option value={2}>2 Hours / Day</option>
+                  <option value={3}>3 Hours / Day</option>
+                  <option value={4}>4 Hours / Day</option>
+                  <option value={6}>6 Hours / Day</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          {/* Course Multi-select Chips */}
+          <div className="space-y-2.5">
+            <label className="text-xs font-bold text-black uppercase tracking-wider block">
+              Select Courses to Include in Revision Plan
             </label>
-            <input
-              type="text"
-              value={goal}
-              onChange={(e) => setGoal(e.target.value)}
-              placeholder="e.g. Operating Systems End-Term, Raft Consensus Revision"
-              className="w-full px-3.5 py-2.5 bg-zinc-950 border border-zinc-800 rounded-lg text-sm text-zinc-100 placeholder-zinc-500 focus:outline-none focus:border-zinc-700"
-            />
-          </div>
-
-          {/* Timeframe & Hours */}
-          <div className="grid grid-cols-2 gap-3">
-            <div className="space-y-1.5">
-              <label className="text-xs font-medium text-zinc-300 block">
-                Total Days
-              </label>
-              <select
-                value={daysCount}
-                onChange={(e) => setDaysCount(Number(e.target.value))}
-                className="w-full px-3 py-2.5 bg-zinc-950 border border-zinc-800 rounded-lg text-xs font-mono text-zinc-200 focus:outline-none focus:border-zinc-700"
-              >
-                <option value={3}>3 Days (Crash Prep)</option>
-                <option value={4}>4 Days (Intensive)</option>
-                <option value={7}>7 Days (Full Week)</option>
-                <option value={14}>14 Days (Comprehensive)</option>
-              </select>
-            </div>
-
-            <div className="space-y-1.5">
-              <label className="text-xs font-medium text-zinc-300 block">
-                Hours / Day
-              </label>
-              <select
-                value={hoursPerDay}
-                onChange={(e) => setHoursPerDay(Number(e.target.value))}
-                className="w-full px-3 py-2.5 bg-zinc-950 border border-zinc-800 rounded-lg text-xs font-mono text-zinc-200 focus:outline-none focus:border-zinc-700"
-              >
-                <option value={2}>2 Hours / Day</option>
-                <option value={3}>3 Hours / Day</option>
-                <option value={4}>4 Hours / Day</option>
-                <option value={6}>6 Hours / Day</option>
-              </select>
+            <div className="flex flex-wrap gap-2.5">
+              {courses.map((c) => {
+                const isSelected = selectedCourseIds.includes(c.id);
+                return (
+                  <button
+                    key={c.id}
+                    type="button"
+                    onClick={() => handleToggleCourse(c.id)}
+                    className={`px-3.5 py-2 rounded-xl text-xs font-bold border-2 border-black transition-all cursor-pointer ${
+                      isSelected
+                        ? 'bg-black text-[#ffe17c] shadow-hard-sm translate-x-0.5 translate-y-0.5'
+                        : 'bg-white text-black hover:bg-[#ffe17c] shadow-hard-sm'
+                    }`}
+                  >
+                    {c.code} — {c.title}
+                  </button>
+                );
+              })}
             </div>
           </div>
-        </div>
 
-        {/* Course Multi-select Chips */}
-        <div className="space-y-2">
-          <label className="text-xs font-medium text-zinc-300 block">
-            Select Courses to Include in Revision Plan
-          </label>
-          <div className="flex flex-wrap gap-2">
-            {courses.map((c) => {
-              const isSelected = selectedCourseIds.includes(c.id);
-              return (
-                <button
-                  key={c.id}
-                  type="button"
-                  onClick={() => handleToggleCourse(c.id)}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-mono transition-colors border ${
-                    isSelected
-                      ? 'bg-zinc-100 text-zinc-950 border-white font-medium'
-                      : 'bg-zinc-950 text-zinc-400 border-zinc-800 hover:text-zinc-200 hover:border-zinc-700'
-                  }`}
-                >
-                  {c.code} — {c.title}
-                </button>
-              );
-            })}
-          </div>
-        </div>
-
-        {error && (
-          <div className="p-3 rounded-lg bg-rose-950/40 border border-rose-800 text-rose-300 text-xs flex items-center gap-2">
-            <AlertCircle className="w-4 h-4 shrink-0" />
-            <span>{error}</span>
-          </div>
-        )}
-
-        <div className="pt-2 flex justify-end">
-          <Button
-            variant="primary"
-            size="md"
-            onClick={handleGeneratePlan}
-            isLoading={isGenerating}
-            leftIcon={<Sparkles className="w-4 h-4 text-purple-600" />}
-          >
-            Generate Structured Plan
-          </Button>
-        </div>
-      </Card>
-
-      {/* Generated Plan View */}
-      {isGenerating ? (
-        <LoadingSpinner label="Formulating structured daily tasks and linking readings..." className="py-16" />
-      ) : activePlan ? (
-        <div className="space-y-6">
-          {savedPlans.length > 1 && (
-            <div className="flex items-center gap-2 overflow-x-auto pb-1 text-xs">
-              <span className="text-zinc-500 font-mono text-[11px] shrink-0">Saved Plans:</span>
-              {savedPlans.map((p) => (
-                <button
-                  key={p.id}
-                  onClick={() => setActivePlan(p)}
-                  className={`px-2.5 py-1 rounded-lg font-mono text-xs transition-colors shrink-0 ${
-                    activePlan.id === p.id
-                      ? 'bg-zinc-100 text-zinc-950 font-medium'
-                      : 'bg-zinc-900 text-zinc-400 hover:text-zinc-200 border border-zinc-800'
-                  }`}
-                >
-                  {p.goal}
-                </button>
-              ))}
+          {error && (
+            <div className="p-4 rounded-xl bg-red-100 border-2 border-black text-red-900 text-xs font-bold flex items-center gap-2 shadow-hard-sm">
+              <AlertCircle className="w-4 h-4 shrink-0 text-red-700" />
+              <span>{error}</span>
             </div>
           )}
 
-          {/* Plan Meta Banner & Progress */}
-          <div className="p-6 rounded-2xl bg-zinc-900 border border-zinc-800 flex flex-col md:flex-row md:items-center justify-between gap-6">
-            <div className="space-y-2">
-              <div className="flex items-center gap-2 flex-wrap">
-                <span className="text-xs font-mono font-bold px-2.5 py-0.5 rounded bg-zinc-800 text-white border border-zinc-750">
-                  {activePlan.total_days} Days Revision
-                </span>
-                <span className="text-xs font-mono text-zinc-400">
-                  {activePlan.total_hours} Estimated Hours
-                </span>
-              </div>
-
-              <h3 className="text-xl font-bold text-white tracking-tight">
-                {activePlan.goal}
-              </h3>
-
-              <p className="text-xs text-zinc-400 max-w-2xl leading-relaxed">
-                {activePlan.summary}
-              </p>
-            </div>
-
-            <div className="flex flex-col sm:flex-row md:flex-col items-start md:items-end gap-3 shrink-0">
-              {/* Progress metric */}
-              <div className="w-full sm:w-48 bg-zinc-950 p-3 rounded-xl border border-zinc-800">
-                <div className="flex justify-between text-[11px] font-mono text-zinc-400 mb-1.5">
-                  <span>Progress</span>
-                  <span className="text-emerald-400 font-bold">{progressPercent}%</span>
-                </div>
-                <div className="w-full bg-zinc-800 h-2 rounded-full overflow-hidden">
-                  <div
-                    className="bg-emerald-400 h-full transition-all duration-300 rounded-full"
-                    style={{ width: `${progressPercent}%` }}
-                  />
-                </div>
-                <div className="text-[10px] text-zinc-500 font-mono text-right mt-1">
-                  {completedTasksCount} of {totalTasksCount} tasks completed
-                </div>
-              </div>
-
-              {/* Save Plan Button */}
-              <Button
-                variant={saveSuccess ? 'secondary' : 'outline'}
-                size="sm"
-                onClick={handleSavePlan}
-                isLoading={isSaving}
-                leftIcon={
-                  saveSuccess ? (
-                    <Check className="w-4 h-4 text-emerald-400" />
-                  ) : (
-                    <Save className="w-4 h-4 text-zinc-300" />
-                  )
-                }
-                className="w-full text-xs"
-              >
-                {saveSuccess ? 'Plan Saved' : 'Save Plan to Campus Backend'}
-              </Button>
-            </div>
+          <div className="pt-2 flex justify-end">
+            <button
+              onClick={handleGeneratePlan}
+              disabled={isGenerating}
+              className="neo-btn-primary text-sm py-3 px-6 shadow-hard-md cursor-pointer"
+            >
+              <Sparkles className="w-4 h-4 text-[#ffe17c]" />
+              <span>{isGenerating ? 'Generating Plan...' : 'Generate Structured Plan'}</span>
+            </button>
           </div>
+        </div>
 
-          {/* Structured Days Timeline Tasks */}
-          <div className="space-y-4">
-            <h4 className="text-xs font-bold text-zinc-400 uppercase tracking-wider font-mono">
-              Milestone Breakdown ({activePlan.days.length} Days)
-            </h4>
+        {/* Generated Plan View */}
+        {isGenerating ? (
+          <LoadingSpinner label="Formulating structured daily milestones and linking readings..." className="py-16" />
+        ) : activePlan ? (
+          <div className="space-y-6">
+            {savedPlans.length > 1 && (
+              <div className="flex items-center gap-2 overflow-x-auto pb-1 text-xs">
+                <span className="text-[#b7c6c2] font-mono font-bold text-xs shrink-0">Saved Plans:</span>
+                {savedPlans.map((p) => (
+                  <button
+                    key={p.id}
+                    onClick={() => setActivePlan(p)}
+                    className={`px-3 py-1.5 rounded-xl font-bold border-2 border-black transition-all shrink-0 cursor-pointer ${
+                      activePlan.id === p.id
+                        ? 'bg-[#ffe17c] text-black shadow-hard-sm'
+                        : 'bg-white text-black hover:bg-[#ffe17c] shadow-hard-sm'
+                    }`}
+                  >
+                    {p.goal}
+                  </button>
+                ))}
+              </div>
+            )}
 
-            {activePlan.days.map((day: StudyPlanDay) => (
-              <Card key={day.day_number} className="p-5 sm:p-6 bg-zinc-900/80 border-zinc-800 space-y-4">
-                {/* Day Header */}
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-zinc-800 gap-2">
-                  <div>
-                    <h5 className="text-base font-bold text-zinc-100">{day.day_label}</h5>
-                    <p className="text-xs text-zinc-400 mt-0.5">{day.focus_area}</p>
-                  </div>
-                  <span className="text-[11px] font-mono text-zinc-500 bg-zinc-950 px-2 py-1 rounded border border-zinc-850 shrink-0">
-                    {day.tasks.length} targeted tasks
+            {/* Plan Meta Banner & Progress */}
+            <div className="bg-white border-2 border-black rounded-2xl p-6 sm:p-8 shadow-hard-lg flex flex-col md:flex-row md:items-center justify-between gap-6">
+              <div className="space-y-3">
+                <div className="flex items-center gap-2 flex-wrap">
+                  <span className="text-xs font-mono font-bold px-3 py-1 rounded-lg bg-black text-[#ffe17c] border-2 border-black shadow-hard-sm">
+                    {activePlan.total_days} Days Revision
+                  </span>
+                  <span className="text-xs font-mono font-bold text-black bg-[#b7c6c2] px-3 py-1 rounded-lg border-2 border-black">
+                    {activePlan.total_hours} Estimated Hours
                   </span>
                 </div>
 
-                {/* Day's Tasks Checklist */}
-                <div className="space-y-2.5">
-                  {day.tasks.map((task: StudyPlanTask) => (
+                <h3 className="font-heading text-2xl font-extrabold text-black tracking-tight">
+                  {activePlan.goal}
+                </h3>
+
+                <p className="text-sm text-zinc-700 font-medium max-w-2xl leading-relaxed">
+                  {activePlan.summary}
+                </p>
+              </div>
+
+              <div className="flex flex-col sm:flex-row md:flex-col items-start md:items-end gap-4 shrink-0">
+                {/* Progress metric */}
+                <div className="w-full sm:w-56 bg-[#f4f4f5] p-4 rounded-xl border-2 border-black shadow-hard-sm">
+                  <div className="flex justify-between text-xs font-bold text-black mb-2">
+                    <span>Mastery Progress</span>
+                    <span className="font-mono">{progressPercent}%</span>
+                  </div>
+                  <div className="w-full bg-white h-3 rounded-full overflow-hidden border-2 border-black">
                     <div
-                      key={task.id}
-                      onClick={() => handleToggleTask(day.day_number, task.id)}
-                      className={`p-3.5 rounded-xl border transition-all cursor-pointer flex items-start justify-between gap-3 ${
-                        task.completed
-                          ? 'bg-zinc-950/40 border-zinc-850 text-zinc-500 line-through opacity-70'
-                          : 'bg-zinc-950 border-zinc-800/80 hover:border-zinc-700 text-zinc-200'
-                      }`}
-                    >
-                      <div className="flex items-start gap-3 flex-1">
+                      className="bg-[#ffe17c] h-full transition-all duration-300 border-r border-black"
+                      style={{ width: `${progressPercent}%` }}
+                    />
+                  </div>
+                  <div className="text-[10px] text-zinc-600 font-mono font-bold text-right mt-1.5">
+                    {completedTasksCount} / {totalTasksCount} completed
+                  </div>
+                </div>
+
+                {/* Save Plan Button */}
+                <Button
+                  variant={saveSuccess ? 'yellow' : 'secondary'}
+                  size="sm"
+                  onClick={handleSavePlan}
+                  isLoading={isSaving}
+                  leftIcon={
+                    saveSuccess ? (
+                      <Check className="w-4 h-4 text-black stroke-[3]" />
+                    ) : (
+                      <Save className="w-4 h-4 text-black" />
+                    )
+                  }
+                  className="w-full text-xs shadow-hard-sm"
+                >
+                  {saveSuccess ? 'Plan Saved to SQLite' : 'Save Plan to Campus Node'}
+                </Button>
+              </div>
+            </div>
+
+            {/* Structured Days Timeline Tasks */}
+            <div className="space-y-6">
+              <h4 className="font-heading text-xl font-extrabold text-white uppercase tracking-wider">
+                Milestone Schedule ({activePlan.days.length} Days)
+              </h4>
+
+              {activePlan.days.map((day: StudyPlanDay) => (
+                <div
+                  key={day.day_number}
+                  className="bg-white border-2 border-black rounded-2xl p-6 sm:p-8 shadow-hard-md space-y-4"
+                >
+                  {/* Day Header */}
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b-2 border-black gap-2">
+                    <div>
+                      <div className="flex items-center gap-2 mb-1">
+                        <span className="font-heading text-lg font-extrabold text-black">
+                          Day {day.day_number}
+                        </span>
+                        <span className="text-xs font-mono font-bold px-2 py-0.5 rounded bg-black text-[#ffe17c]">
+                          {day.focus_area}
+                        </span>
+                      </div>
+                      <p className="text-xs text-zinc-600 font-medium">
+                        Target Time: ~{(day.tasks.reduce((sum, t) => sum + (t.estimated_minutes || 0), 0) / 60).toFixed(1)} Hours
+                      </p>
+                    </div>
+
+                    <div className="text-xs font-mono font-bold bg-[#f4f4f5] border border-black px-2.5 py-1 rounded">
+                      {day.tasks.filter((t) => t.completed).length} / {day.tasks.length} Done
+                    </div>
+                  </div>
+
+                  {/* Tasks in Day */}
+                  <div className="space-y-3">
+                    {day.tasks.map((task: StudyPlanTask) => (
+                      <div
+                        key={task.id}
+                        onClick={() => handleToggleTask(day.day_number, task.id)}
+                        className={`p-4 rounded-xl border-2 border-black transition-all cursor-pointer flex items-start gap-4 ${
+                          task.completed
+                            ? 'bg-[#b7c6c2]/40 opacity-70 line-through'
+                            : 'bg-white hover:bg-[#ffe17c]/20 shadow-hard-sm'
+                        }`}
+                      >
                         <button
                           type="button"
-                          className="mt-0.5 text-zinc-400 hover:text-white shrink-0"
-                          aria-label={task.completed ? 'Mark uncompleted' : 'Mark completed'}
+                          className="mt-0.5 text-black shrink-0"
+                          aria-label={task.completed ? 'Mark incomplete' : 'Mark complete'}
                         >
                           {task.completed ? (
-                            <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+                            <CheckCircle2 className="w-5 h-5 fill-black text-[#ffe17c]" />
                           ) : (
-                            <Circle className="w-4 h-4 text-zinc-600" />
+                            <Circle className="w-5 h-5 stroke-[2]" />
                           )}
                         </button>
 
-                        <div className="space-y-1">
-                          <p className={`text-sm font-semibold leading-snug ${task.completed ? 'text-zinc-500' : 'text-zinc-100'}`}>
-                            {task.title}
-                          </p>
-                          <p className="text-xs text-zinc-400 font-sans leading-relaxed">
+                        <div className="flex-1 space-y-1">
+                          <div className="flex items-center justify-between gap-2">
+                            <span className="text-sm font-bold text-black leading-snug">
+                              {task.title}
+                            </span>
+                            <span className="text-[11px] font-mono font-bold text-zinc-600 shrink-0">
+                              {task.estimated_minutes}m
+                            </span>
+                          </div>
+
+                          <p className="text-xs text-zinc-700 font-medium">
                             {task.description}
                           </p>
 
-                          {/* Linked local resource */}
                           {task.resource_title && (
-                            <button
-                              type="button"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                if (task.resource_id) {
-                                  getResourceById(task.resource_id)
-                                    .then((r) => openResourceViewer(r))
-                                    .catch(() => {});
-                                }
-                              }}
-                              className="pt-1.5 flex items-center gap-2 hover:underline text-left group/res"
-                            >
-                              {task.resource_type && (
-                                <Badge resourceType={task.resource_type} size="sm" />
-                              )}
-                              <span className="text-[11px] text-zinc-300 font-mono truncate max-w-md group-hover/res:text-white">
-                                {task.resource_title}
-                              </span>
-                            </button>
+                            <div className="pt-2 flex items-center gap-2">
+                              <button
+                                type="button"
+                                onClick={async (e) => {
+                                  e.stopPropagation();
+                                  if (task.resource_id) {
+                                    try {
+                                      const resObj = await getResourceById(task.resource_id);
+                                      openResourceViewer(resObj);
+                                    } catch {}
+                                  }
+                                }}
+                                className="text-[11px] font-bold text-black bg-[#ffe17c] px-2.5 py-1 rounded-lg border-2 border-black inline-flex items-center gap-1.5 shadow-hard-sm cursor-pointer hover:bg-black hover:text-[#ffe17c] transition-colors"
+                              >
+                                <BookOpen className="w-3.5 h-3.5" />
+                                <span>{task.resource_title}</span>
+                              </button>
+                            </div>
                           )}
                         </div>
                       </div>
-
-                      <div className="flex items-center gap-1.5 text-[11px] font-mono text-zinc-400 shrink-0">
-                        <Clock className="w-3 h-3 text-zinc-500" />
-                        <span>{task.estimated_minutes} min</span>
-                      </div>
-                    </div>
-                  ))}
+                    ))}
+                  </div>
                 </div>
-              </Card>
-            ))}
+              ))}
+            </div>
           </div>
-        </div>
-      ) : (
-        <EmptyState
-          icon={<CalendarDays className="w-8 h-8 text-zinc-500" />}
-          title="No Revision Plan Generated Yet"
-          description="Enter your target exam or subject goal above to create a personalized multi-day structured revision schedule."
-        />
-      )}
+        ) : (
+          <EmptyState
+            icon={<CalendarDays className="w-10 h-10 text-black" />}
+            title="No study plan generated yet"
+            description="Specify your subject revision target and timeframe above to formulate your personalized campus study schedule."
+            actionLabel="Generate Now"
+            onAction={handleGeneratePlan}
+          />
+        )}
+      </div>
     </div>
   );
 };

@@ -32,88 +32,77 @@ export const ChatMessageItem: React.FC<ChatMessageItemProps> = ({ message }) => 
     setTimeout(() => setCopied(false), 2000);
   };
 
-  // Simple clean markdown formatter for academic responses
+  // Clean markdown formatter
   const renderFormattedContent = (text: string) => {
     const lines = text.split('\n');
     return lines.map((line, idx) => {
-      // Header 3
       if (line.startsWith('### ')) {
         return (
-          <h4 key={idx} className="text-base font-bold text-zinc-100 mt-4 mb-2 first:mt-0">
+          <h4 key={idx} className="font-heading text-base font-extrabold text-black mt-4 mb-2 first:mt-0">
             {line.replace('### ', '')}
           </h4>
         );
       }
-      // Header 2
       if (line.startsWith('## ')) {
         return (
-          <h3 key={idx} className="text-lg font-bold text-white mt-5 mb-2.5 first:mt-0">
+          <h3 key={idx} className="font-heading text-lg font-extrabold text-black mt-5 mb-2.5 first:mt-0">
             {line.replace('## ', '')}
           </h3>
         );
       }
-      // Header 1
       if (line.startsWith('# ')) {
         return (
-          <h2 key={idx} className="text-xl font-bold text-white mt-6 mb-3 first:mt-0">
+          <h2 key={idx} className="font-heading text-xl font-extrabold text-black mt-6 mb-3 first:mt-0">
             {line.replace('# ', '')}
           </h2>
         );
       }
-      // Horizontal rule
       if (line.trim() === '---') {
-        return <hr key={idx} className="border-zinc-800 my-4" />;
+        return <hr key={idx} className="border-2 border-black my-4" />;
       }
-      // Unordered list item
       if (line.startsWith('- ') || line.startsWith('* ')) {
         return (
-          <li key={idx} className="ml-4 list-disc text-zinc-300 text-sm leading-relaxed my-1">
+          <li key={idx} className="ml-5 list-disc text-zinc-900 text-sm leading-relaxed my-1 font-medium">
             {formatInlineStyles(line.replace(/^[-*]\s+/, ''))}
           </li>
         );
       }
-      // Numbered list item
       if (/^\d+\.\s/.test(line)) {
         return (
-          <li key={idx} className="ml-4 list-decimal text-zinc-300 text-sm leading-relaxed my-1 font-sans">
+          <li key={idx} className="ml-5 list-decimal text-zinc-900 text-sm leading-relaxed my-1 font-medium">
             {formatInlineStyles(line.replace(/^\d+\.\s+/, ''))}
           </li>
         );
       }
-      // Empty line
       if (!line.trim()) {
         return <div key={idx} className="h-2" />;
       }
-      // Standard paragraph
       return (
-        <p key={idx} className="text-zinc-300 text-sm leading-relaxed my-1.5">
+        <p key={idx} className="text-zinc-900 text-sm leading-relaxed my-1.5 font-medium">
           {formatInlineStyles(line)}
         </p>
       );
     });
   };
 
-  // Helper to format inline bold, inline code, and backticks
   const formatInlineStyles = (content: string) => {
-    // Split on inline code blocks `code`
     const parts = content.split(/(`[^`]+`)/g);
     return parts.map((part, i) => {
       if (part.startsWith('`') && part.endsWith('`')) {
         return (
           <code
             key={i}
-            className="px-1.5 py-0.5 rounded bg-zinc-800 text-purple-300 font-mono text-xs border border-zinc-700/60"
+            className="bg-[#ffe17c] text-black font-mono text-xs px-1.5 py-0.5 rounded border border-black font-bold"
           >
             {part.slice(1, -1)}
           </code>
         );
       }
-      // Split on bold **bold**
       const boldParts = part.split(/(\*\*[^*]+\*\*)/g);
-      return boldParts.map((bPart, bi) => {
+      return boldParts.map((bPart, j) => {
         if (bPart.startsWith('**') && bPart.endsWith('**')) {
           return (
-            <strong key={`${i}-${bi}`} className="font-semibold text-zinc-100">
+            <strong key={`${i}-${j}`} className="font-extrabold text-black">
               {bPart.slice(2, -2)}
             </strong>
           );
@@ -126,14 +115,14 @@ export const ChatMessageItem: React.FC<ChatMessageItemProps> = ({ message }) => 
   if (isUser) {
     return (
       <div className="flex justify-end gap-3 max-w-4xl ml-auto mb-6">
-        <div className="max-w-2xl bg-zinc-800 border border-zinc-700/80 rounded-2xl rounded-tr-sm px-4 py-3 text-zinc-100 text-sm shadow-sm">
-          <p className="leading-relaxed whitespace-pre-wrap">{message.content}</p>
-          <span className="block text-right text-[10px] text-zinc-400 mt-1.5 font-mono">
+        <div className="max-w-2xl bg-black text-[#ffe17c] border-2 border-black rounded-2xl rounded-tr-sm px-5 py-3.5 shadow-hard-md">
+          <p className="leading-relaxed whitespace-pre-wrap text-sm font-bold">{message.content}</p>
+          <span className="block text-right text-[10px] text-white/70 mt-1 font-mono">
             {new Date(message.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
           </span>
         </div>
-        <div className="w-8 h-8 rounded-full bg-zinc-800 border border-zinc-700 flex items-center justify-center text-zinc-300 shrink-0">
-          <User className="w-4 h-4" />
+        <div className="w-9 h-9 rounded-xl bg-[#ffe17c] border-2 border-black flex items-center justify-center text-black shadow-hard-sm shrink-0">
+          <User className="w-5 h-5" />
         </div>
       </div>
     );
@@ -142,63 +131,62 @@ export const ChatMessageItem: React.FC<ChatMessageItemProps> = ({ message }) => 
   // Assistant Message
   return (
     <div className="flex gap-3 max-w-4xl mr-auto mb-8 w-full">
-      <div className="w-8 h-8 rounded-full bg-zinc-800 border border-zinc-700 flex items-center justify-center text-purple-400 shrink-0 mt-1">
-        <Bot className="w-4 h-4" />
+      <div className="w-9 h-9 rounded-xl bg-black border-2 border-black flex items-center justify-center text-[#ffe17c] shadow-hard-sm shrink-0 mt-1">
+        <Bot className="w-5 h-5" />
       </div>
 
-      <div className="flex-1 bg-zinc-900/90 border border-zinc-800 rounded-2xl rounded-tl-sm p-4 sm:p-5 shadow-sm overflow-hidden">
+      <div className="flex-1 bg-white border-2 border-black rounded-2xl rounded-tl-sm p-5 sm:p-6 shadow-hard-md overflow-hidden">
         {/* Header Bar */}
-        <div className="flex flex-wrap items-center justify-between gap-2 pb-3 mb-3 border-b border-zinc-800/80">
+        <div className="flex flex-wrap items-center justify-between gap-2 pb-3 mb-4 border-b-2 border-black">
           <div className="flex items-center gap-2 flex-wrap">
-            <span className="text-xs font-semibold text-zinc-200">NEXUS Study AI</span>
+            <span className="font-heading text-sm font-extrabold text-black">NEXUS AI Study Assistant</span>
 
-            {/* Grounding Status Indicator */}
             {message.isError ? (
-              <Badge variant="rose" size="sm" icon={<AlertCircle className="w-3 h-3" />}>
+              <Badge variant="rose" size="sm" icon={<AlertCircle className="w-3 h-3 text-black" />}>
                 AI Error
               </Badge>
             ) : isGrounded ? (
               <Badge variant="grounded" size="sm">
-                Verified Source Grounded • {sources.length} citations
+                Verified Grounded • {sources.length} citations
               </Badge>
             ) : (
               <Badge variant="ungrounded" size="sm">
-                General AI • Not grounded in local materials
+                General AI Query
               </Badge>
             )}
           </div>
 
-          <div className="flex items-center gap-2 text-zinc-400 text-xs">
+          <div className="flex items-center gap-2 text-black text-xs font-bold">
             <button
               onClick={handleCopy}
-              className="flex items-center gap-1 p-1 hover:text-white rounded hover:bg-zinc-800 transition-colors"
+              className="flex items-center gap-1 px-2 py-1 rounded bg-[#f4f4f5] hover:bg-[#ffe17c] border border-black transition-colors cursor-pointer"
               title="Copy answer"
             >
-              {copied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+              {copied ? <Check className="w-3.5 h-3.5 text-black" /> : <Copy className="w-3.5 h-3.5" />}
               <span className="text-[11px]">{copied ? 'Copied' : 'Copy'}</span>
             </button>
-            <span className="font-mono text-[10px]">
+            <span className="font-mono text-[10px] text-zinc-600">
               {new Date(message.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
             </span>
           </div>
         </div>
 
         {/* Content Body */}
-        <div className="text-zinc-200 leading-relaxed font-sans space-y-1">
+        <div className="text-black leading-relaxed font-sans space-y-1">
           {renderFormattedContent(message.content)}
         </div>
 
-        {/* Source References Section (if present) */}
+        {/* Source References Section */}
         {sources.length > 0 && (
-          <div className="mt-5 pt-4 border-t border-zinc-800/80">
+          <div className="mt-6 pt-4 border-t-2 border-black">
             <button
               onClick={() => setSourcesOpen(!sourcesOpen)}
-              className="flex items-center justify-between w-full p-2 rounded-lg bg-zinc-950/60 border border-zinc-800/80 text-xs text-zinc-300 hover:text-white transition-colors"
+              className="flex items-center justify-between w-full p-2.5 rounded-xl bg-[#ffe17c] border-2 border-black text-xs font-bold text-black hover:translate-x-0.5 hover:translate-y-0.5 transition-all shadow-hard-sm cursor-pointer"
             >
               <div className="flex items-center gap-2">
-                <BookOpen className="w-3.5 h-3.5 text-emerald-400" />
-                <span className="font-medium">
-                  Inspect Grounded Source References ({sources.length})
+                <BookOpen className="w-4 h-4 text-black" />
+                <span>
+                  Inspect Grounded Source Citations ({sources.length})
                 </span>
               </div>
               {sourcesOpen ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}

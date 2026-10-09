@@ -2,13 +2,10 @@ import React, { useState, useEffect } from 'react';
 import type { Course, ResourceType, Resource } from '../api/types';
 import { getCourses, uploadResource } from '../api';
 import { useApp } from '../context';
-import { Card } from '../components/common/Card';
-import { Button } from '../components/common/Button';
 import {
   UploadCloud,
   CheckCircle2,
   AlertCircle,
-  ShieldAlert,
 } from 'lucide-react';
 
 export const AdminResourcesPage: React.FC = () => {
@@ -46,7 +43,6 @@ export const AdminResourcesPage: React.FC = () => {
       const file = e.target.files[0];
       setSelectedFile(file);
       if (!title) {
-        // Auto-populate title from clean filename
         const cleanName = file.name.replace(/\.[^/.]+$/, '').replace(/[_-]/g, ' ');
         setTitle(cleanName);
       }
@@ -89,7 +85,6 @@ export const AdminResourcesPage: React.FC = () => {
 
       setSuccessMessage(`Resource "${res.title}" successfully added to ${res.course_code || 'course'}!`);
       setLastUploadedResource(res);
-      // Reset form
       setTitle('');
       setDescription('');
       setSelectedFile(null);
@@ -101,197 +96,161 @@ export const AdminResourcesPage: React.FC = () => {
   };
 
   return (
-    <div className="max-w-4xl mx-auto px-4 sm:px-6 py-6 sm:py-8 space-y-6">
-      {/* Security & Scope Notice banner */}
-      {/* Fulfills requirement: "Do not expose this page as a secure administrative system unless authentication and authorization are implemented by the backend." */}
-      <div className="p-4 rounded-xl bg-zinc-900 border border-zinc-800 text-xs text-zinc-400 space-y-1">
-        <div className="flex items-center gap-2 text-zinc-200 font-semibold">
-          <ShieldAlert className="w-4 h-4 text-amber-400 shrink-0" />
-          <span>Local Educational Material Uploader (Campus Node Environment)</span>
+    <div className="min-h-screen bg-[#171e19] py-8 px-4 sm:px-8">
+      <div className="max-w-4xl mx-auto space-y-8">
+        {/* Banner: Neo-Brutalist #ffe17c with Radial Dots */}
+        <div className="bg-[#ffe17c] bg-radial-dots border-2 border-black rounded-2xl p-6 sm:p-8 shadow-hard-lg">
+          <div className="space-y-2">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-black text-[#ffe17c] text-xs font-bold border-2 border-black shadow-hard-sm">
+              <UploadCloud className="w-3.5 h-3.5" />
+              <span>INTRANET CURATION CONSOLE</span>
+            </div>
+            <h1 className="font-heading text-3xl sm:text-5xl font-extrabold text-black tracking-tight">
+              Resource Ingestion Manager
+            </h1>
+            <p className="text-sm sm:text-base text-black/85 font-medium max-w-2xl leading-relaxed">
+              Upload lecture recordings, lab guides, and textbooks directly to local server disk storage with automated MIME validation and SQLite metadata cataloging.
+            </p>
+          </div>
         </div>
-        <p className="leading-relaxed pl-6">
-          Backend authentication and role-based authorization are not currently enforced in this offline campus node deployment.
-          This tool is provided for locally hosting and indexing approved university lecture notes, slides, and educational media.
-        </p>
-      </div>
 
-      <div>
-        <h2 className="text-xl sm:text-2xl font-bold text-white tracking-tight flex items-center gap-2">
-          Add Educational Material
-        </h2>
-        <p className="text-xs text-zinc-400 mt-1">
-          Upload and index lecture notes, textbooks, and video files to make them searchable and grounded in the AI assistant.
-        </p>
-      </div>
-
-      {/* Main Upload Form */}
-      <Card className="p-6 bg-zinc-900/90 border-zinc-800">
-        <form onSubmit={handleUpload} className="space-y-5">
-          {/* Resource Title */}
-          <div className="space-y-1.5">
-            <label className="text-xs font-medium text-zinc-300 block">
-              Resource Title <span className="text-rose-400">*</span>
-            </label>
-            <input
-              type="text"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              placeholder="e.g. Lecture 06: Paging Schemes and Page Fault Handling"
-              disabled={isUploading}
-              className="w-full px-3.5 py-2.5 bg-zinc-950 border border-zinc-800 rounded-lg text-sm text-zinc-100 placeholder-zinc-500 focus:outline-none focus:border-zinc-700"
-            />
-          </div>
-
-          {/* Course & Resource Type */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div className="space-y-1.5">
-              <label className="text-xs font-medium text-zinc-300 block">
-                Target Course <span className="text-rose-400">*</span>
-              </label>
-              <select
-                value={courseId}
-                onChange={(e) => setCourseId(e.target.value)}
-                disabled={isUploading}
-                className="w-full px-3 py-2.5 bg-zinc-950 border border-zinc-800 rounded-lg text-xs font-mono text-zinc-200 focus:outline-none focus:border-zinc-700"
-              >
-                {courses.map((c) => (
-                  <option key={c.id} value={c.id}>
-                    {c.code} — {c.title}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div className="space-y-1.5">
-              <label className="text-xs font-medium text-zinc-300 block">
-                Resource Type <span className="text-rose-400">*</span>
-              </label>
-              <select
-                value={resourceType}
-                onChange={(e) => setResourceType(e.target.value as ResourceType)}
-                disabled={isUploading}
-                className="w-full px-3 py-2.5 bg-zinc-950 border border-zinc-800 rounded-lg text-xs font-mono text-zinc-200 focus:outline-none focus:border-zinc-700 capitalize"
-              >
-                <option value="pdf">PDF Document / Textbook</option>
-                <option value="video">Video Lecture (MP4 / WebM)</option>
-                <option value="notes">Lecture Notes / Cheatsheet</option>
-                <option value="slides">Presentation Slides</option>
-                <option value="lab">Lab Assignment / Code</option>
-              </select>
-            </div>
-          </div>
-
-          {/* Description */}
-          <div className="space-y-1.5">
-            <label className="text-xs font-medium text-zinc-300 block">
-              Summary / Topic Description (Optional)
-            </label>
-            <textarea
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              placeholder="Key concepts, syllabus section, or topics covered for AI grounding..."
-              rows={2}
-              disabled={isUploading}
-              className="w-full px-3.5 py-2 bg-zinc-950 border border-zinc-800 rounded-lg text-xs text-zinc-100 placeholder-zinc-500 focus:outline-none focus:border-zinc-700 resize-none"
-            />
-          </div>
-
-          {/* File Picker */}
-          <div className="space-y-1.5">
-            <label className="text-xs font-medium text-zinc-300 block">
-              Educational File <span className="text-rose-400">*</span>
-            </label>
-            <div className="border border-dashed border-zinc-800 rounded-xl p-5 bg-zinc-950/60 flex flex-col items-center justify-center text-center hover:border-zinc-700 transition-colors">
-              <UploadCloud className="w-8 h-8 text-zinc-500 mb-2" />
-              <input
-                type="file"
-                id="file-upload"
-                onChange={handleFileChange}
-                disabled={isUploading}
-                className="hidden"
-                accept=".pdf,.mp4,.webm,.md,.txt,.c,.py,.zip,.tar.gz"
-              />
-              <label
-                htmlFor="file-upload"
-                className="cursor-pointer text-xs font-medium text-zinc-200 bg-zinc-850 hover:bg-zinc-800 px-3 py-1.5 rounded-lg border border-zinc-750 transition-colors inline-flex items-center gap-2 mb-2"
-              >
-                <span>{selectedFile ? 'Change File' : 'Select Local File'}</span>
-              </label>
-
-              {selectedFile ? (
-                <div className="text-xs font-mono text-zinc-300 flex items-center gap-2">
-                  <span className="font-semibold">{selectedFile.name}</span>
-                  <span className="text-zinc-500">
-                    ({(selectedFile.size / (1024 * 1024)).toFixed(2)} MB)
-                  </span>
-                </div>
-              ) : (
-                <p className="text-[11px] text-zinc-500">
-                  Supported formats: PDF, MP4, Markdown, C, Python source files
-                </p>
-              )}
-            </div>
-          </div>
-
-          {/* Progress Bar (during upload) */}
-          {isUploading && (
-            <div className="space-y-1.5 pt-2">
-              <div className="flex justify-between text-xs font-mono text-zinc-400">
-                <span>Uploading and indexing resource...</span>
-                <span>{uploadProgress}%</span>
-              </div>
-              <div className="w-full bg-zinc-800 h-2 rounded-full overflow-hidden">
-                <div
-                  className="bg-purple-500 h-full transition-all duration-200 rounded-full"
-                  style={{ width: `${uploadProgress}%` }}
-                />
-              </div>
-            </div>
-          )}
-
-          {/* Feedback messages */}
-          {errorMessage && (
-            <div className="p-3.5 rounded-lg bg-rose-950/40 border border-rose-800/80 text-rose-300 text-xs flex items-center gap-2.5">
-              <AlertCircle className="w-4 h-4 shrink-0 text-rose-400" />
-              <span>{errorMessage}</span>
-            </div>
-          )}
-
-          {successMessage && (
-            <div className="p-3.5 rounded-lg bg-emerald-950/40 border border-emerald-800/80 text-emerald-300 text-xs flex items-center justify-between gap-2.5">
-              <div className="flex items-center gap-2.5">
-                <CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-400" />
-                <span>{successMessage}</span>
-              </div>
-              {lastUploadedResource && (
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={() => openResourceViewer(lastUploadedResource)}
-                  className="text-xs py-1 px-2.5"
+        {/* Upload Form Card */}
+        <div className="bg-white border-2 border-black rounded-2xl p-6 sm:p-8 shadow-hard-lg space-y-6">
+          <form onSubmit={handleUpload} className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* Course Selector */}
+              <div className="space-y-2">
+                <label className="text-xs font-bold text-black uppercase tracking-wider block">
+                  Target Course
+                </label>
+                <select
+                  value={courseId}
+                  onChange={(e) => setCourseId(e.target.value)}
+                  className="w-full px-4 py-3 bg-[#f4f4f5] border-2 border-black rounded-xl text-xs font-bold text-black focus:outline-none shadow-hard-sm cursor-pointer"
                 >
-                  Preview
-                </Button>
-              )}
-            </div>
-          )}
+                  {courses.map((c) => (
+                    <option key={c.id} value={c.id}>
+                      {c.code} — {c.title}
+                    </option>
+                  ))}
+                </select>
+              </div>
 
-          {/* Submit Button */}
-          <div className="pt-2 flex justify-end">
-            <Button
-              type="submit"
-              variant="primary"
-              size="md"
-              isLoading={isUploading}
-              disabled={isUploading}
-              leftIcon={<UploadCloud className="w-4 h-4" />}
-            >
-              Upload Educational Material
-            </Button>
-          </div>
-        </form>
-      </Card>
+              {/* Resource Type */}
+              <div className="space-y-2">
+                <label className="text-xs font-bold text-black uppercase tracking-wider block">
+                  Format Type
+                </label>
+                <select
+                  value={resourceType}
+                  onChange={(e) => setResourceType(e.target.value as ResourceType)}
+                  className="w-full px-4 py-3 bg-[#f4f4f5] border-2 border-black rounded-xl text-xs font-bold text-black focus:outline-none shadow-hard-sm cursor-pointer"
+                >
+                  <option value="pdf">PDF Textbook / Problem Set</option>
+                  <option value="video">MP4 Video Lecture (HTTP 206 Range)</option>
+                  <option value="notes">Markdown / Study Notes</option>
+                  <option value="lab">Lab / Code Assignment</option>
+                  <option value="slides">Presentation Slides</option>
+                </select>
+              </div>
+            </div>
+
+            {/* Title */}
+            <div className="space-y-2">
+              <label className="text-xs font-bold text-black uppercase tracking-wider block">
+                Resource Title
+              </label>
+              <input
+                type="text"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                placeholder="e.g. Chapter 4: Deadlock Prevention and Detection"
+                className="w-full px-4 py-3 bg-[#f4f4f5] border-2 border-black rounded-xl text-sm font-bold text-black focus:outline-none shadow-hard-sm"
+              />
+            </div>
+
+            {/* Description */}
+            <div className="space-y-2">
+              <label className="text-xs font-bold text-black uppercase tracking-wider block">
+                Educational Description
+              </label>
+              <textarea
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                placeholder="Provide a syllabus summary or keywords to facilitate local indexing..."
+                rows={3}
+                className="w-full px-4 py-3 bg-[#f4f4f5] border-2 border-black rounded-xl text-sm font-medium text-black focus:outline-none shadow-hard-sm resize-none"
+              />
+            </div>
+
+            {/* File Dropzone */}
+            <div className="space-y-2">
+              <label className="text-xs font-bold text-black uppercase tracking-wider block">
+                File Attachment (Disk Stored)
+              </label>
+              <div className="bg-[#ffe17c]/20 border-2 border-dashed border-black rounded-2xl p-6 text-center hover:bg-[#ffe17c]/30 transition-all cursor-pointer relative">
+                <input
+                  type="file"
+                  onChange={handleFileChange}
+                  accept=".pdf,.mp4,.webm,.md,.txt,.zip,.doc,.docx"
+                  className="absolute inset-0 opacity-0 cursor-pointer w-full h-full"
+                />
+                <div className="flex flex-col items-center justify-center space-y-2">
+                  <div className="w-12 h-12 bg-[#ffe17c] border-2 border-black rounded-xl flex items-center justify-center shadow-hard-sm">
+                    <UploadCloud className="w-6 h-6 text-black" />
+                  </div>
+                  <div className="text-sm font-bold text-black">
+                    {selectedFile ? selectedFile.name : 'Click or drag file to upload'}
+                  </div>
+                  <div className="text-xs text-zinc-600 font-mono">
+                    {selectedFile
+                      ? `${(selectedFile.size / (1024 * 1024)).toFixed(2)} MB • ${selectedFile.type || 'binary'}`
+                      : 'Supports PDF, MP4 (Range Streaming), Markdown, TXT'}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Messages */}
+            {errorMessage && (
+              <div className="p-4 rounded-xl bg-red-100 border-2 border-black text-red-900 text-xs font-bold flex items-center gap-2 shadow-hard-sm">
+                <AlertCircle className="w-4 h-4 shrink-0 text-red-700" />
+                <span>{errorMessage}</span>
+              </div>
+            )}
+
+            {successMessage && (
+              <div className="p-4 rounded-xl bg-[#b7c6c2] border-2 border-black text-black text-xs font-bold flex items-center justify-between shadow-hard-sm">
+                <div className="flex items-center gap-2">
+                  <CheckCircle2 className="w-4 h-4 text-black shrink-0" />
+                  <span>{successMessage}</span>
+                </div>
+                {lastUploadedResource && (
+                  <button
+                    type="button"
+                    onClick={() => openResourceViewer(lastUploadedResource)}
+                    className="underline text-black font-extrabold cursor-pointer hover:text-white"
+                  >
+                    View Now &rarr;
+                  </button>
+                )}
+              </div>
+            )}
+
+            {/* Submit */}
+            <div className="pt-2 flex justify-end">
+              <button
+                type="submit"
+                disabled={isUploading || !selectedFile}
+                className="neo-btn-primary text-sm py-3 px-6 shadow-hard-md cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <UploadCloud className="w-4 h-4 text-[#ffe17c]" />
+                <span>{isUploading ? `Ingesting (${uploadProgress}%)...` : 'Store on Campus Server'}</span>
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
     </div>
   );
 };
