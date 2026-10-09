@@ -80,7 +80,7 @@ export class AIController {
 
   public static async getStudyPlanById(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const { id } = req.params;
+      const id = req.params.id as string;
       const plan = StudyPlanService.getById(id);
 
       res.status(200).json({

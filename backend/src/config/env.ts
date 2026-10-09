@@ -13,7 +13,7 @@ const envSchema = z.object({
     .string()
     .optional()
     .transform((val) => val === 'true' || val === '1'),
-  BASE_URL: z.string().url().default('http://localhost:5000'),
+  BASE_URL: z.string().default('http://localhost:5000'),
   CORS_ORIGIN: z.string().default('*'),
 
   // Storage paths
@@ -24,14 +24,14 @@ const envSchema = z.object({
   MAX_FILE_SIZE_BYTES: z.coerce.number().int().positive().default(524288000), // 500 MB default
 
   // AI Service settings
-  AI_SERVICE_URL: z.string().url().default('http://127.0.0.1:8000'),
+  AI_SERVICE_URL: z.string().default('http://127.0.0.1:8000'),
   AI_SERVICE_TIMEOUT_MS: z.coerce.number().int().positive().default(30000),
   AI_SERVICE_API_KEY: z.string().optional().default(''),
   AI_MOCK_FALLBACK: z
     .string()
     .optional()
     .transform((val) => val === 'true' || val === '1')
-    .default('false'),
+    .default(false),
 
   // Rate Limiting
   RATE_LIMIT_WINDOW_MS: z.coerce.number().int().positive().default(60000),

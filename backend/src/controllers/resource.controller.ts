@@ -31,7 +31,7 @@ export class ResourceController {
 
   public static async getResourceById(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const { id } = req.params;
+      const id = req.params.id as string;
 
       // If requested directly via browser media/download or with Range header, stream file directly
       const wantsFile =
@@ -61,7 +61,7 @@ export class ResourceController {
 
   public static async streamResourceFile(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const { id } = req.params;
+      const id = req.params.id as string;
       ResourceService.streamFile(id, req, res);
     } catch (err) {
       next(err);
@@ -70,7 +70,7 @@ export class ResourceController {
 
   public static async listResourcesByCourse(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const { id } = req.params;
+      const id = req.params.id as string;
       const type = req.query.type as string | undefined;
 
       const resources = ResourceService.getByCourseId(id, type);
@@ -91,7 +91,7 @@ export class ResourceController {
 
   public static async deleteResource(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const { id } = req.params;
+      const id = req.params.id as string;
       ResourceService.delete(id);
 
       res.status(200).json({

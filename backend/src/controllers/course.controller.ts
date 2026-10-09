@@ -27,7 +27,7 @@ export class CourseController {
 
   public static async getCourseById(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const { id } = req.params;
+      const id = req.params.id as string;
       const course = CourseService.getById(id);
 
       res.status(200).json({
@@ -55,7 +55,7 @@ export class CourseController {
 
   public static async updateCourse(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const { id } = req.params;
+      const id = req.params.id as string;
       const validated = updateCourseSchema.parse(req.body);
       const course = CourseService.update(id, validated);
 
@@ -70,7 +70,7 @@ export class CourseController {
 
   public static async deleteCourse(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const { id } = req.params;
+      const id = req.params.id as string;
       CourseService.delete(id);
 
       res.status(200).json({
