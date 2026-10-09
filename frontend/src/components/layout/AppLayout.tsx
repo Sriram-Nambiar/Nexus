@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { Outlet } from 'react-router-dom';
-import { Sidebar } from './Sidebar';
 import { Header } from './Header';
 import { MobileNav } from './MobileNav';
 import { ResourceViewerModal } from '../resources/ResourceViewerModal';
@@ -9,18 +8,14 @@ export const AppLayout: React.FC = () => {
   const [isMobileDrawerOpen, setIsMobileDrawerOpen] = useState(false);
 
   return (
-    <div className="flex h-screen w-full bg-zinc-950 text-zinc-100 overflow-hidden font-sans antialiased">
-      {/* Desktop Left Sidebar */}
-      <Sidebar className="hidden md:flex" />
+    <div className="min-h-screen w-full bg-[#171e19] text-black font-sans antialiased flex flex-col">
+      {/* Fixed Neo-Brutalist Header: h-20, #ffe17c, border-b-2 border-black */}
+      <Header onToggleMobileMenu={() => setIsMobileDrawerOpen(true)} />
 
-      {/* Main Content Area */}
-      <div className="flex-1 flex flex-col min-w-0 h-full overflow-hidden">
-        <Header onToggleMobileMenu={() => setIsMobileDrawerOpen(true)} />
-
-        <main className="flex-1 overflow-y-auto pb-20 md:pb-8 focus:outline-none">
-          <Outlet />
-        </main>
-      </div>
+      {/* Main Content: offset by 80px (pt-20) for the fixed header */}
+      <main className="flex-1 w-full pt-20 pb-24 lg:pb-0">
+        <Outlet />
+      </main>
 
       {/* Mobile Navigation Drawer & Bottom Bar */}
       <MobileNav

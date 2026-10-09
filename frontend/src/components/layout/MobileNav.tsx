@@ -9,7 +9,7 @@ import {
   CalendarDays,
   UploadCloud,
   X,
-  GraduationCap,
+  Zap,
 } from 'lucide-react';
 
 interface MobileNavProps {
@@ -23,23 +23,25 @@ export const MobileNav: React.FC<MobileNavProps> = ({ isDrawerOpen, onCloseDrawe
   const primaryBottomTabs = [
     { to: '/', label: 'Home', icon: <LayoutDashboard className="w-5 h-5" /> },
     { to: '/courses', label: 'Courses', icon: <BookOpen className="w-5 h-5" /> },
+    { to: '/assistant', label: 'AI', icon: <Bot className="w-5 h-5" /> },
+    { to: '/planner', label: 'Plan', icon: <CalendarDays className="w-5 h-5" /> },
     { to: '/search', label: 'Search', icon: <Search className="w-5 h-5" /> },
-    { to: '/assistant', label: 'AI Study', icon: <Bot className="w-5 h-5" /> },
-    { to: '/planner', label: 'Planner', icon: <CalendarDays className="w-5 h-5" /> },
   ];
 
   return (
     <>
-      {/* Mobile Bottom Navigation Bar */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-zinc-950/95 backdrop-blur-md border-t border-zinc-850 px-2 py-1 flex items-center justify-around safe-bottom">
+      {/* Mobile Bottom Navigation Bar: Neo-Brutalist #ffe17c */}
+      <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#ffe17c] border-t-2 border-black px-2 py-1.5 flex items-center justify-around select-none">
         {primaryBottomTabs.map((tab) => (
           <NavLink
             key={tab.to}
             to={tab.to}
             end={tab.to === '/'}
             className={({ isActive }) =>
-              `flex flex-col items-center py-1.5 px-3 rounded-lg text-[10px] font-medium transition-colors ${
-                isActive ? 'text-white' : 'text-zinc-500 hover:text-zinc-300'
+              `flex flex-col items-center py-1 px-3 rounded-lg text-[11px] font-bold transition-all ${
+                isActive
+                  ? 'bg-black text-[#ffe17c] border-2 border-black shadow-hard-sm'
+                  : 'text-black hover:bg-black/10'
               }`
             }
           >
@@ -49,97 +51,100 @@ export const MobileNav: React.FC<MobileNavProps> = ({ isDrawerOpen, onCloseDrawe
         ))}
       </nav>
 
-      {/* Mobile Drawer (for Admin & Offline settings) */}
+      {/* Mobile Drawer (Admin & Offline settings) */}
       {isDrawerOpen && (
-        <div className="md:hidden fixed inset-0 z-50 flex">
+        <div className="lg:hidden fixed inset-0 z-50 flex">
           {/* Backdrop */}
           <div
-            className="fixed inset-0 bg-black/70 backdrop-blur-sm transition-opacity"
+            className="fixed inset-0 bg-black/60 backdrop-blur-xs transition-opacity"
             onClick={onCloseDrawer}
           />
 
           {/* Drawer content */}
-          <div className="relative w-72 max-w-[80vw] bg-zinc-950 border-r border-zinc-800 h-full flex flex-col justify-between p-5 z-10 animate-in slide-in-from-left duration-200">
+          <div className="relative w-80 max-w-[85vw] bg-white border-r-2 border-black h-full flex flex-col justify-between p-6 z-10 shadow-hard-xl">
             <div>
-              <div className="flex items-center justify-between pb-4 mb-4 border-b border-zinc-850">
-                <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-lg bg-zinc-100 flex items-center justify-center text-zinc-950">
-                    <GraduationCap className="w-4 h-4" />
+              <div className="flex items-center justify-between pb-4 mb-6 border-b-2 border-black">
+                <div className="flex items-center gap-3">
+                  <div className="w-9 h-9 bg-black flex items-center justify-center border-2 border-black shadow-hard-sm">
+                    <Zap className="w-5 h-5 text-[#ffe17c] fill-[#ffe17c]" />
                   </div>
-                  <span className="font-bold text-white text-sm">NEXUS AI</span>
+                  <div>
+                    <span className="font-heading text-xl font-extrabold text-black">NEXUS AI</span>
+                    <div className="text-[10px] font-bold text-zinc-600 uppercase">Intranet Node</div>
+                  </div>
                 </div>
                 <button
                   onClick={onCloseDrawer}
-                  className="p-1 rounded-lg text-zinc-400 hover:text-white hover:bg-zinc-800"
+                  className="p-1.5 rounded-lg bg-[#f4f4f5] border-2 border-black text-black hover:bg-[#ffe17c] transition-colors"
                 >
                   <X className="w-5 h-5" />
                 </button>
               </div>
 
-              <div className="space-y-1">
+              <div className="space-y-2">
                 <NavLink
                   to="/"
                   onClick={onCloseDrawer}
-                  className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-xs font-medium text-zinc-300 hover:bg-zinc-900"
+                  className="flex items-center gap-3 px-3 py-2.5 rounded-xl border-2 border-black font-bold text-sm bg-white hover:bg-[#ffe17c] transition-colors shadow-hard-sm"
                 >
-                  <LayoutDashboard className="w-4 h-4" />
-                  <span>Dashboard</span>
+                  <LayoutDashboard className="w-4 h-4 text-black" />
+                  <span>Home Landing Page</span>
                 </NavLink>
                 <NavLink
                   to="/courses"
                   onClick={onCloseDrawer}
-                  className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-xs font-medium text-zinc-300 hover:bg-zinc-900"
+                  className="flex items-center gap-3 px-3 py-2.5 rounded-xl border-2 border-black font-bold text-sm bg-white hover:bg-[#ffe17c] transition-colors shadow-hard-sm"
                 >
-                  <BookOpen className="w-4 h-4" />
-                  <span>Course Library</span>
-                </NavLink>
-                <NavLink
-                  to="/search"
-                  onClick={onCloseDrawer}
-                  className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-xs font-medium text-zinc-300 hover:bg-zinc-900"
-                >
-                  <Search className="w-4 h-4" />
-                  <span>Global Search</span>
+                  <BookOpen className="w-4 h-4 text-black" />
+                  <span>Course Library & Videos</span>
                 </NavLink>
                 <NavLink
                   to="/assistant"
                   onClick={onCloseDrawer}
-                  className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-xs font-medium text-zinc-300 hover:bg-zinc-900"
+                  className="flex items-center gap-3 px-3 py-2.5 rounded-xl border-2 border-black font-bold text-sm bg-white hover:bg-[#ffe17c] transition-colors shadow-hard-sm"
                 >
-                  <Bot className="w-4 h-4" />
+                  <Bot className="w-4 h-4 text-black" />
                   <span>AI Study Assistant</span>
                 </NavLink>
                 <NavLink
                   to="/planner"
                   onClick={onCloseDrawer}
-                  className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-xs font-medium text-zinc-300 hover:bg-zinc-900"
+                  className="flex items-center gap-3 px-3 py-2.5 rounded-xl border-2 border-black font-bold text-sm bg-white hover:bg-[#ffe17c] transition-colors shadow-hard-sm"
                 >
-                  <CalendarDays className="w-4 h-4" />
-                  <span>Study Planner</span>
+                  <CalendarDays className="w-4 h-4 text-black" />
+                  <span>Revision Planner</span>
+                </NavLink>
+                <NavLink
+                  to="/search"
+                  onClick={onCloseDrawer}
+                  className="flex items-center gap-3 px-3 py-2.5 rounded-xl border-2 border-black font-bold text-sm bg-white hover:bg-[#ffe17c] transition-colors shadow-hard-sm"
+                >
+                  <Search className="w-4 h-4 text-black" />
+                  <span>Global Search</span>
                 </NavLink>
                 <NavLink
                   to="/admin/resources"
                   onClick={onCloseDrawer}
-                  className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-xs font-medium text-zinc-300 hover:bg-zinc-900"
+                  className="flex items-center gap-3 px-3 py-2.5 rounded-xl border-2 border-black font-bold text-sm bg-[#ffe17c] hover:bg-black hover:text-[#ffe17c] transition-colors shadow-hard-sm"
                 >
-                  <UploadCloud className="w-4 h-4" />
+                  <UploadCloud className="w-4 h-4 text-black" />
                   <span>Resource Manager</span>
                 </NavLink>
               </div>
             </div>
 
-            <div className="p-3 rounded-xl bg-zinc-900 border border-zinc-800 text-xs space-y-2">
-              <div className="flex items-center justify-between text-[11px]">
-                <span className="text-zinc-400">Node Status:</span>
+            <div className="p-4 rounded-xl bg-[#f4f4f5] border-2 border-black text-xs space-y-3 shadow-hard-sm">
+              <div className="flex items-center justify-between text-xs font-bold text-black">
+                <span>Campus Node:</span>
                 {isBackendLive ? (
-                  <span className="text-emerald-400 font-mono">Live Node</span>
+                  <span className="text-emerald-700 font-mono">127.0.0.1:5000 Live</span>
                 ) : (
-                  <span className="text-amber-400 font-mono">Offline Cache</span>
+                  <span className="text-amber-700 font-mono">Offline Cache</span>
                 )}
               </div>
               <button
                 onClick={toggleForceMock}
-                className="w-full text-center py-1.5 px-2 rounded bg-zinc-800 hover:bg-zinc-700 text-zinc-200 text-xs font-medium transition-colors"
+                className="w-full text-center py-2 px-3 rounded-lg bg-black text-white hover:bg-[#ffe17c] hover:text-black font-bold text-xs border-2 border-black transition-colors"
               >
                 {isMockForced ? 'Switch to Live API' : 'Simulate Offline Mode'}
               </button>
