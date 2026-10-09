@@ -9,6 +9,7 @@
     "dev": "tsx watch src/server.ts",
     "test": "vitest run",
     "test:watch": "vitest",
+    "seed": "tsx src/db/seed.ts",
     "typecheck": "tsc --noEmit"
   },
   "keywords": [],
