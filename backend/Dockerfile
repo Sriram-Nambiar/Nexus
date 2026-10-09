@@ -7,16 +7,11 @@ FROM node:22-bookworm-slim AS builder
 
 WORKDIR /app
 
-# Install native compilation dependencies for SQLite bindings
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    python3 \
-    make \
-    g++ \
-    && rm -rf /var/lib/apt/lists/*
+# Copy package manifest
+COPY package.json ./
 
-# Copy package manifests first for efficient layer caching
-COPY package.json package-lock.json ./
-RUN npm ci
+# Install all dependencies including devDependencies for compilation
+RUN npm install
 
 # Copy TypeScript configuration and source files
 COPY tsconfig.json ./
@@ -30,14 +25,6 @@ FROM node:22-bookworm-slim AS runner
 
 WORKDIR /app
 
-# Install runtime dependencies for SQLite
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    python3 \
-    make \
-    g++ \
-    curl \
-    && rm -rf /var/lib/apt/lists/*
-
 ENV NODE_ENV=production
 ENV PORT=5000
 ENV HOST=0.0.0.0
@@ -47,14 +34,14 @@ ENV UPLOAD_DIR=/app/data/uploads
 ENV AI_SERVICE_URL=http://ai-service:8000
 ENV AI_MOCK_FALLBACK=true
 
-# Copy package manifests and install production-only dependencies
-COPY package.json package-lock.json ./
-RUN npm ci --omit=dev && npm cache clean --force
+# Copy package manifest and install only runtime production dependencies
+COPY package.json ./
+RUN npm install --omit=dev && npm cache clean --force
 
-# Copy compiled JavaScript from builder
+# Copy compiled JavaScript from builder stage
 COPY --from=builder /app/dist ./dist
 
-# Create persistent storage directories
+# Create persistent storage directory for SQLite and uploaded educational files
 RUN mkdir -p /app/data/uploads
 
 # Expose port 5000 for local network / Kiwix hotspot devices
