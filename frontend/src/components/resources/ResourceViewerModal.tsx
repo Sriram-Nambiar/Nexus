@@ -32,30 +32,30 @@ export const ResourceViewerModal: React.FC = () => {
       onClose={closeResourceViewer}
       maxWidth="6xl"
       title={
-        <div className="flex items-center gap-2.5">
+        <div className="flex items-center gap-3">
           <Badge resourceType={resource.resource_type} size="sm" />
-          <span className="text-base font-semibold text-zinc-100 truncate max-w-xl">
+          <span className="font-heading text-lg font-extrabold text-black truncate max-w-xl">
             {resource.title}
           </span>
         </div>
       }
       subtitle={`${resource.course_code || 'UNIV'} • ${resource.course_title || 'Course Material'}`}
     >
-      <div className="flex flex-col bg-zinc-950">
+      <div className="flex flex-col bg-white">
         {/* Main Content Viewer: PDF, Video, or Markdown Notes */}
-        <div className="p-4 sm:p-5 border-b border-zinc-800/80">
+        <div className="p-4 sm:p-6 border-b-2 border-black">
           {resource.resource_type === 'pdf' ? (
             <PdfViewer resource={resource} initialPage={targetPage} />
           ) : resource.resource_type === 'video' ? (
             <VideoPlayer resource={resource} />
           ) : (
             /* Notes / Text / Lab Viewer */
-            <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6 max-h-[60vh] overflow-y-auto">
-              <div className="flex items-center justify-between pb-3 mb-4 border-b border-zinc-800 text-xs text-zinc-400">
-                <span className="font-mono">{resource.file_name || 'document.md'}</span>
+            <div className="bg-[#f4f4f5] border-2 border-black rounded-xl p-6 max-h-[60vh] overflow-y-auto shadow-hard-sm">
+              <div className="flex items-center justify-between pb-3 mb-4 border-b-2 border-black text-xs font-mono font-bold text-black">
+                <span>{resource.file_name || 'document.md'}</span>
                 <span>{resource.page_count ? `${resource.page_count} pages` : 'Markdown document'}</span>
               </div>
-              <div className="prose prose-invert max-w-none text-zinc-300 text-sm leading-relaxed space-y-4 font-mono whitespace-pre-wrap">
+              <div className="text-black text-sm leading-relaxed space-y-4 font-mono whitespace-pre-wrap">
                 {resource.content_preview || resource.description}
               </div>
             </div>
@@ -63,48 +63,42 @@ export const ResourceViewerModal: React.FC = () => {
         </div>
 
         {/* Resource Meta & Direct AI Action Footer */}
-        <div className="p-4 sm:p-5 bg-zinc-900/60 flex flex-col md:flex-row md:items-center justify-between gap-4 text-xs text-zinc-400">
+        <div className="p-4 sm:p-5 bg-[#ffe17c] flex flex-col md:flex-row md:items-center justify-between gap-4 text-xs font-bold text-black">
           <div className="flex flex-wrap items-center gap-4">
             {resource.author && (
-              <div className="flex items-center gap-1.5 text-zinc-300">
-                <User className="w-3.5 h-3.5 text-zinc-500" />
+              <div className="flex items-center gap-1.5 bg-white px-2.5 py-1 rounded border-2 border-black">
+                <User className="w-3.5 h-3.5 text-black" />
                 <span>{resource.author}</span>
               </div>
             )}
-            <div className="flex items-center gap-1.5">
-              <HardDrive className="w-3.5 h-3.5 text-zinc-500" />
+            <div className="flex items-center gap-1.5 bg-white px-2.5 py-1 rounded border-2 border-black">
+              <HardDrive className="w-3.5 h-3.5 text-black" />
               <span>{formatFileSize(resource.file_size_bytes)}</span>
             </div>
             {resource.created_at && (
-              <div className="flex items-center gap-1.5">
-                <Calendar className="w-3.5 h-3.5 text-zinc-500" />
+              <div className="flex items-center gap-1.5 bg-white px-2.5 py-1 rounded border-2 border-black">
+                <Calendar className="w-3.5 h-3.5 text-black" />
                 <span>{new Date(resource.created_at).toLocaleDateString()}</span>
-              </div>
-            )}
-            {resource.tags && resource.tags.length > 0 && (
-              <div className="flex items-center gap-1">
-                {resource.tags.slice(0, 3).map((tag: string) => (
-                  <span
-                    key={tag}
-                    className="px-2 py-0.5 rounded bg-zinc-800 text-zinc-400 text-[11px]"
-                  >
-                    #{tag}
-                  </span>
-                ))}
               </div>
             )}
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-3">
             <Button
-              variant="secondary"
+              variant="primary"
               size="sm"
-              leftIcon={<Bot className="w-4 h-4 text-purple-400" />}
+              leftIcon={<Bot className="w-4 h-4 text-[#ffe17c]" />}
               onClick={handleAskAI}
+              className="shadow-hard-sm"
             >
               Ask AI About This
             </Button>
-            <Button variant="ghost" size="sm" onClick={closeResourceViewer}>
+            <Button
+              variant="secondary"
+              size="sm"
+              onClick={closeResourceViewer}
+              className="shadow-hard-sm"
+            >
               Close
             </Button>
           </div>

@@ -62,18 +62,18 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({ resource }) => {
   };
 
   return (
-    <div className="flex flex-col h-full bg-black text-white rounded-xl overflow-hidden border border-zinc-800">
+    <div className="flex flex-col h-full bg-black text-black rounded-xl overflow-hidden border-2 border-black shadow-hard-lg">
       {/* Video Viewport */}
-      <div className="relative aspect-video w-full bg-zinc-950 flex items-center justify-center overflow-hidden">
+      <div className="relative aspect-video w-full bg-black flex items-center justify-center overflow-hidden">
         {hasError ? (
-          <div className="flex flex-col items-center justify-center p-6 text-center">
-            <AlertCircle className="w-12 h-12 text-rose-400 mb-3" />
-            <h4 className="text-base font-semibold text-zinc-100 mb-1">Video Stream Notice</h4>
-            <p className="text-xs text-zinc-400 max-w-md mb-4">
-              Unable to stream video directly from `{resource.file_url}`. If you are offline or using a local media proxy, check your media path.
+          <div className="flex flex-col items-center justify-center p-6 text-center bg-[#171e19] text-white w-full h-full">
+            <AlertCircle className="w-12 h-12 text-[#ff5f57] mb-3" />
+            <h4 className="font-heading text-lg font-bold text-white mb-1">HTTP Range Notice</h4>
+            <p className="text-xs text-[#b7c6c2] max-w-md mb-4 font-mono">
+              Unable to stream directly from `{resource.file_url}`. Video may still be downloading to local storage.
             </p>
             <Button
-              variant="outline"
+              variant="yellow"
               size="sm"
               onClick={() => {
                 setHasError(false);
@@ -107,24 +107,24 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({ resource }) => {
               playsInline
             />
 
-            {/* Big center play icon overlay when paused */}
+            {/* Neo-Brutalist Play overlay when paused */}
             {!isPlaying && (
               <button
                 onClick={togglePlay}
-                className="absolute inset-0 m-auto w-16 h-16 rounded-full bg-zinc-900/80 border border-zinc-700/80 flex items-center justify-center text-white hover:scale-110 hover:bg-zinc-800 transition-all shadow-xl backdrop-blur-sm"
+                className="absolute inset-0 m-auto w-20 h-20 rounded-2xl bg-[#ffe17c] border-2 border-black flex items-center justify-center text-black shadow-hard-md hover:scale-105 active:scale-95 transition-all cursor-pointer"
                 aria-label="Play video"
               >
-                <Play className="w-7 h-7 translate-x-0.5 fill-white" />
+                <Play className="w-8 h-8 translate-x-0.5 fill-black" />
               </button>
             )}
           </>
         )}
       </div>
 
-      {/* Media Controls Bar */}
-      <div className="p-3 bg-zinc-900 border-t border-zinc-800 flex flex-col gap-2">
+      {/* Media Controls Bar: Neo-Brutalist White & Yellow */}
+      <div className="p-3 bg-white border-t-2 border-black flex flex-col gap-2">
         {/* Scrubber Timeline */}
-        <div className="flex items-center gap-2 text-xs font-mono text-zinc-400">
+        <div className="flex items-center gap-3 text-xs font-mono font-bold text-black">
           <span>{formatTime(currentTime)}</span>
           <input
             type="range"
@@ -133,7 +133,7 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({ resource }) => {
             step={0.5}
             value={currentTime}
             onChange={handleSeek}
-            className="flex-1 h-1.5 bg-zinc-700 rounded-lg appearance-none cursor-pointer accent-white"
+            className="flex-1 h-2 bg-zinc-200 border border-black rounded-lg appearance-none cursor-pointer accent-[#ffe17c]"
           />
           <span>{formatTime(duration)}</span>
         </div>
@@ -143,7 +143,7 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({ resource }) => {
           <div className="flex items-center gap-2">
             <button
               onClick={togglePlay}
-              className="p-1.5 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-white transition-colors"
+              className="p-2 rounded-lg bg-black text-[#ffe17c] border-2 border-black shadow-hard-sm hover:translate-x-0.5 hover:translate-y-0.5 transition-all cursor-pointer"
               aria-label={isPlaying ? 'Pause' : 'Play'}
             >
               {isPlaying ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4 fill-current" />}
@@ -151,22 +151,22 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({ resource }) => {
 
             <button
               onClick={toggleMute}
-              className="p-1.5 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-300 hover:text-white transition-colors"
+              className="p-2 rounded-lg bg-[#b7c6c2] text-black border-2 border-black shadow-hard-sm hover:translate-x-0.5 hover:translate-y-0.5 transition-all cursor-pointer"
               aria-label={isMuted ? 'Unmute' : 'Mute'}
             >
-              {isMuted ? <VolumeX className="w-4 h-4 text-rose-400" /> : <Volume2 className="w-4 h-4" />}
+              {isMuted ? <VolumeX className="w-4 h-4 text-red-600" /> : <Volume2 className="w-4 h-4" />}
             </button>
 
-            <div className="hidden sm:flex items-center gap-1.5 text-zinc-400 ml-2">
+            <div className="hidden sm:flex items-center gap-1.5 text-black font-bold ml-2">
               <Clock className="w-3.5 h-3.5" />
               <span>Speed:</span>
-              <div className="flex items-center bg-zinc-800 rounded-md p-0.5 border border-zinc-700">
+              <div className="flex items-center bg-white rounded-lg p-0.5 border-2 border-black shadow-hard-sm">
                 {[0.75, 1.0, 1.25, 1.5, 2.0].map((rate) => (
                   <button
                     key={rate}
                     onClick={() => handleRateChange(rate)}
-                    className={`px-1.5 py-0.5 rounded text-[11px] font-mono transition-colors ${
-                      playbackRate === rate ? 'bg-zinc-600 text-white font-bold' : 'text-zinc-400 hover:text-zinc-200'
+                    className={`px-2 py-0.5 rounded text-[11px] font-mono font-bold transition-all cursor-pointer ${
+                      playbackRate === rate ? 'bg-black text-[#ffe17c]' : 'text-black hover:bg-[#ffe17c]'
                     }`}
                   >
                     {rate}x
@@ -180,16 +180,16 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({ resource }) => {
             <a
               href={resource.file_url}
               download={resource.file_name || `${resource.title}.mp4`}
-              className="p-1.5 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-300 hover:text-white transition-colors inline-flex items-center gap-1"
+              className="p-2 rounded-lg bg-[#ffe17c] text-black border-2 border-black shadow-hard-sm hover:translate-x-0.5 hover:translate-y-0.5 transition-all inline-flex items-center gap-1.5 font-bold cursor-pointer"
               title="Download local video copy"
             >
               <Download className="w-4 h-4" />
-              <span className="hidden md:inline text-xs">Download</span>
+              <span className="hidden md:inline text-xs">Offline Save</span>
             </a>
 
             <button
               onClick={handleFullscreen}
-              className="p-1.5 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-300 hover:text-white transition-colors"
+              className="p-2 rounded-lg bg-white text-black border-2 border-black shadow-hard-sm hover:translate-x-0.5 hover:translate-y-0.5 transition-all cursor-pointer"
               title="Fullscreen"
             >
               <Maximize className="w-4 h-4" />
