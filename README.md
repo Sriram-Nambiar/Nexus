@@ -1,26 +1,56 @@
 # NEXUS AI — Intelligent Offline Campus & Local Network Learning Platform
 
-NEXUS AI is an educational platform designed to run on local university servers and offline **Kiwix Wi-Fi hotspots**. It provides course management, fast indexed search, educational resource delivery (PDFs and videos with HTTP 206 byte-range seeking), LM Studio Gemma AI integration, and Kiwix ZIM archive support.
+NEXUS AI is an autonomous, air-gapped educational platform designed to run on local campus servers and offline **Kiwix Wi-Fi hotspots**. It delivers course materials, high-performance video streaming with HTTP 206 byte-range seeking, syllabus-grounded AI assistance via LM Studio Gemma, and OpenZIM archive integration without requiring an internet connection.
 
 ---
 
 ## 📸 Interface Preview
 
 ### Neo-Brutalist Campus OS Landing Page
-![NEXUS AI Hero Landing Page](./docs/screenshots/hero_landing_page.png)
+![NEXUS AI Hero Landing Page](https://raw.githubusercontent.com/Sriram-Nambiar/Nexus/main/docs/screenshots/hero_landing_page.png)
 
 ### Course Catalog & NPTEL Video Streaming Player
-![Course Materials & NPTEL Video Streaming](./docs/screenshots/course_lecture_stream.png)
+![Course Materials & NPTEL Video Streaming](https://raw.githubusercontent.com/Sriram-Nambiar/Nexus/main/docs/screenshots/course_lecture_stream.png)
 
 ---
 
-## ✨ Key Features
+## 🌟 Core Pillars & Key Features
 
-- **🎨 Neo-Brutalist Design System**: High-contrast `#ffe17c` yellow palette, solid 2px black borders, hard offset shadows, and typography powered by *Cabinet Grotesk* and *Satoshi*.
-- **⚡ Zero-Buffering Local Video Streaming**: High-performance HTTP 206 Partial Content byte-range delivery with instant seeking on campus Wi-Fi.
-- **🤖 LM Studio & Gemma 4 Integration**: On-device syllabus-grounded AI assistant powered by local Gemma inference via OpenAI-compatible API (`http://127.0.0.1:1234/v1`).
-- **📦 Kiwix Offspot Hotspot Support**: Direct OpenZIM archive integration (`.zim`) enabling full offline distribution across multiple student devices over Wi-Fi without internet.
-- **📚 Complete Course & Resource Management**: Upload, index, tag, and stream PDFs, slides, recitation notes, and video lectures.
+### 1. 🔒 100% Data Privacy & Zero Cloud Exfiltration
+- **Completely Air-Gapped**: Student questions, exam doubts, and uploaded academic documents never leave the local machine or campus network.
+- **No Third-Party Telemetry**: Zero external tracking, data scraping, or third-party API logging (unlike commercial cloud LLMs).
+
+### 2. 💸 100% Free & Zero Cloud Bills ($0.00 / query)
+- **Zero Token Fees**: Powered by open-weights models (Google Gemma 4, Llama) running entirely on local consumer hardware (laptops, mini-PCs, or Raspberry Pi).
+- **No Subscription Paywalls**: Eliminates monthly cloud hosting, egress bandwidth costs, and API token bills.
+
+### 3. 📡 Multi-User Wi-Fi Hotspot Mesh (Kiwix Offspot Architecture)
+- **One Host Serves Dozens of Students**: A single laptop or Raspberry Pi creates an offline Wi-Fi access point without needing an internet connection, SIM card, or router.
+- **Concurrent Access**: Multiple student computers, phones, or tablets can connect to the local hotspot simultaneously and browse courses, stream lectures, and query the AI independently.
+
+### 4. ⚡ Zero-Buffering HTTP 206 Partial Content Video Streaming
+- **Instant Byte-Range Seeking**: Delivers high-definition NPTEL and university video lectures with instantaneous forward/backward scrubbing.
+- **Sub-10ms Latency**: Streams video chunks on demand over the local intranet rather than forcing whole-file downloads, drastically reducing network overhead.
+
+### 5. 📦 Kiwix OpenZIM (.zim) Educational Archive Interoperability
+- **Standardized Offline Packages**: Direct support for OpenZIM archives, allowing whole encyclopedias (Wikipedia, Project Gutenberg, Khan Academy, PhET Science Simulations) to be stored and accessed locally.
+
+### 6. 🧠 Syllabus-Grounded Local AI Tutor
+- **Context-Aware Assistance**: The AI assistant dynamically reads course titles, syllabi, instructor descriptions, and uploaded PDFs/videos from SQLite, grounding every answer in the student's actual curriculum.
+- **Accurate & Non-Hallucinatory**: Ensures students receive answers aligned with their specific professors and university course requirements.
+
+### 7. 📅 Personalized AI Study & Revision Planner
+- **Goal-Driven Scheduling**: Students can generate multi-week structured revision plans (`/planner`) tailored to their exam dates, topics, and available study hours.
+- **Direct Material Linking**: Daily study modules link directly back to locally hosted course lecture notes and video segments.
+
+### 8. 🔍 Blazing Fast Full-Text Local Search
+- **Instant Discovery**: Indexed search across courses, lecture titles, notes, and resource tags in milliseconds without external search engines.
+
+### 9. 🌍 Crisis, Maritime & Rural Education Ready
+- **Extreme Resilience**: Engineered specifically for rural classrooms, disaster-relief camps, research vessels, remote communities, and areas with severed or unstable connectivity.
+
+### 10. 🎨 High-Contrast Neo-Brutalist Design System
+- **Accessibility & Clarity**: Bold `#ffe17c` yellow background, solid 2px black borders, hard offset shadows, and clean geometric typography (*Cabinet Grotesk* + *Satoshi*) for effortless readability across daylight, tablets, and phones.
 
 ---
 
