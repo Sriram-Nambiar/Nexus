@@ -1,0 +1,33 @@
+services:
+  nexus-backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: nexus-backend:latest
+    container_name: nexus_backend
+    restart: unless-stopped
+    ports:
+      - "5000:5000"
+    environment:
+      - NODE_ENV=production
+      - PORT=5000
+      - HOST=0.0.0.0
+      - ENABLE_LAN_ACCESS=true
+      - BASE_URL=http://localhost:5000
+      - CORS_ORIGIN=*
+      - DB_PATH=/app/data/nexus.sqlite
+      - UPLOAD_DIR=/app/data/uploads
+      - MAX_FILE_SIZE_BYTES=524288000
+      - AI_SERVICE_URL=http://ai-service:8000
+      - AI_MOCK_FALLBACK=true
+    volumes:
+      - nexus_data:/app/data
+    healthcheck:
+      test: ["CMD-SHELL", "node -e \"const http = require('http'); http.get('http://127.0.0.1:5000/api/health', (r) => { process.exit(r.statusCode === 200 ? 0 : 1); }).on('error', () => process.exit(1));\""]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+volumes:
+  nexus_data:
+    name: nexus_storage_volume
