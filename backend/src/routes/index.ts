@@ -8,6 +8,7 @@ import aiRoutes from './ai.routes';
 const apiRouter = Router();
 
 apiRouter.use('/health', healthRoutes);
+apiRouter.use('/status', healthRoutes);
 apiRouter.use('/courses', courseRoutes);
 apiRouter.use('/resources', resourceRoutes);
 apiRouter.use('/search', searchRoutes);

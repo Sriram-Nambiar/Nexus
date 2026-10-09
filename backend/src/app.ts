@@ -1,4 +1,6 @@
-import express, { Application, Request, Response } from 'express';
+import express, { Application, Request, Response, NextFunction } from 'express';
+import path from 'path';
+import fs from 'fs';
 import cors from 'cors';
 import { config } from './config/env';
 import apiRouter from './routes';
@@ -26,25 +28,45 @@ export function createApp(): Application {
   // General rate limiting across endpoints
   app.use('/api', standardRateLimiter);
 
-  // Root endpoint with overview
-  app.get('/', (_req: Request, res: Response) => {
-    res.status(200).json({
-      name: 'NEXUS AI Backend API',
-      version: '1.0.0',
-      description: 'Educational resource management, search, and AI proxy system',
-      endpoints: {
-        health: '/api/health',
-        courses: '/api/courses',
-        resources: '/api/resources',
-        search: '/api/search?q=deadlocks',
-        ai_ask: '/api/ai/ask',
-        ai_study_plan: '/api/ai/study-plan',
-      },
-    });
-  });
-
   // Mount API router under /api
   app.use('/api', apiRouter);
+
+  // Candidate directories for compiled frontend assets
+  const candidateFrontendDirs = [
+    path.resolve(__dirname, '../../frontend/dist'),
+    path.resolve(process.cwd(), '../frontend/dist'),
+    path.resolve(process.cwd(), './frontend/dist'),
+    path.resolve(process.cwd(), './public'),
+  ];
+  const frontendDist = candidateFrontendDirs.find((dir) => fs.existsSync(dir));
+
+  if (frontendDist) {
+    app.use(express.static(frontendDist));
+    // SPA Fallback for client-side routing (e.g. /courses, /assistant)
+    app.use((req: Request, res: Response, next: NextFunction) => {
+      if ((req.method === 'GET' || req.method === 'HEAD') && !req.path.startsWith('/api')) {
+        return res.sendFile(path.join(frontendDist, 'index.html'));
+      }
+      next();
+    });
+  } else {
+    // Root API fallback when frontend build is not found
+    app.get('/', (_req: Request, res: Response) => {
+      res.status(200).json({
+        name: 'NEXUS AI Backend API',
+        version: '1.0.0',
+        description: 'Educational resource management, search, and AI proxy system',
+        endpoints: {
+          health: '/api/health',
+          courses: '/api/courses',
+          resources: '/api/resources',
+          search: '/api/search?q=deadlocks',
+          ai_ask: '/api/ai/ask',
+          ai_study_plan: '/api/ai/study-plan',
+        },
+      });
+    });
+  }
 
   // 404 Not Found Handler
   app.use(notFoundHandler);
