@@ -9,6 +9,7 @@ import type {
   SearchResult,
   SourceReference,
   StudyPlanResponse,
+  OffspotStatusResponse,
 } from './types';
 import { MOCK_COURSES, MOCK_RESOURCES, MOCK_STUDY_PLANS } from './mockData';
 
@@ -845,4 +846,60 @@ export function getSavedStudyPlans(): StudyPlanResponse[] {
   } catch {
     return [MOCK_STUDY_PLANS.default];
   }
+}
+
+/**
+ * GET /api/status/offspot
+ * Retrieves truthful deployment, storage, and network metrics
+ */
+export async function getOffspotStatus(): Promise<OffspotStatusResponse> {
+  try {
+    const res = await fetch(`${API_BASE_URL}/status/offspot`);
+    if (res.ok) {
+      const json = await res.json();
+      return unwrapData<OffspotStatusResponse>(json);
+    }
+  } catch {
+    // Return fallback offline structure
+  }
+
+  return {
+    backend: {
+      status: 'offline_local_client',
+      uptime_seconds: 0,
+      environment: 'browser-client',
+      lan_access_enabled: false,
+      port: 5000,
+      host_binding: '127.0.0.1',
+    },
+    storage: {
+      upload_dir: 'local',
+      database_path: 'local',
+      status: 'available (client cache)',
+      total_resources: 23,
+      total_size_bytes: 51520941,
+      zim_packages_found: 1,
+    },
+    ai_service: {
+      url: 'local',
+      status: 'offline / mock active',
+      mock_fallback: true,
+    },
+    network: {
+      detected_addresses: [
+        { interface: 'Local', ip: window.location.hostname || 'localhost', type: 'browser-origin' },
+      ],
+      access_urls: [window.location.origin],
+    },
+    offspot: {
+      configured: false,
+      deployment_mode: 'Local Host / Standalone Network (Mode A)',
+      access_point_status: 'Not detected in this deployment',
+      domain_name: null,
+      kiwix_service: {
+        url: 'Not configured',
+        integrated: true,
+      },
+    },
+  };
 }

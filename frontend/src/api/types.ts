@@ -132,3 +132,41 @@ export interface CreateResourceRequest {
   description?: string;
   file: File;
 }
+
+export interface OffspotStatusResponse {
+  backend: {
+    status: string;
+    uptime_seconds: number;
+    environment: string;
+    lan_access_enabled: boolean;
+    port: number;
+    host_binding: string;
+  };
+  storage: {
+    upload_dir: string;
+    database_path: string;
+    status: string;
+    total_resources: number;
+    total_size_bytes: number;
+    zim_packages_found: number;
+  };
+  ai_service: {
+    url: string;
+    status: string;
+    mock_fallback: boolean;
+  };
+  network: {
+    detected_addresses: Array<{ interface: string; ip: string; type: string }>;
+    access_urls: string[];
+  };
+  offspot: {
+    configured: boolean;
+    deployment_mode: string;
+    access_point_status: string;
+    domain_name: string | null;
+    kiwix_service: {
+      url: string;
+      integrated: boolean;
+    };
+  };
+}
