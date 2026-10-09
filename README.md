@@ -18,11 +18,29 @@ The NEXUS backend service will be available at:
 
 ## 📁 Repository Structure
 
+- [`frontend/`](./frontend): Modern, offline-first React 19 + TypeScript + Vite + Tailwind CSS web application.
+  - [`README.md`](./frontend/README.md): Frontend architectural overview and developer guide.
 - [`backend/`](./backend): Node.js, Express & TypeScript backend service.
   - [`docs/API.md`](./backend/docs/API.md): Full REST API documentation.
   - [`Dockerfile`](./backend/Dockerfile): Multi-stage container definition.
   - [`README.md`](./backend/README.md): Detailed backend architecture and deployment guide.
 - [`docker-compose.yml`](./docker-compose.yml): Multi-container orchestration with persistent volumes.
+
+---
+
+## 💻 Frontend Development
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+Build and quality checks:
+```bash
+npm run lint    # oxlint: 0 warnings, 0 errors
+npm run build   # tsc -b && vite build
+```
 
 ---
 
