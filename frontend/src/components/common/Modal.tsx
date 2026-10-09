@@ -54,37 +54,37 @@ export const Modal: React.FC<ModalProps> = ({
     <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 animate-in fade-in duration-150">
       {/* Backdrop */}
       <div
-        className="fixed inset-0 bg-black/80 backdrop-blur-sm transition-opacity"
+        className="fixed inset-0 bg-black/75 backdrop-blur-xs transition-opacity"
         onClick={onClose}
         aria-hidden="true"
       />
 
-      {/* Modal Dialog */}
+      {/* Modal Dialog: Neo-Brutalist White with 2px solid black border & 12px hard shadow */}
       <div
-        className={`relative w-full ${maxWidthStyles[maxWidth]} bg-zinc-900 border border-zinc-800 rounded-2xl shadow-2xl overflow-hidden flex flex-col z-10 max-h-[92vh]`}
+        className={`relative w-full ${maxWidthStyles[maxWidth]} bg-white border-2 border-black rounded-2xl shadow-hard-xl overflow-hidden flex flex-col z-10 max-h-[92vh]`}
         role="dialog"
         aria-modal="true"
       >
-        {/* Header */}
+        {/* Header: #ffe17c with border-b-2 border-black */}
         {(title || showCloseButton) && (
-          <div className="flex items-center justify-between px-5 py-4 border-b border-zinc-800/80 bg-zinc-900/90 shrink-0">
+          <div className="flex items-center justify-between px-6 py-4 border-b-2 border-black bg-[#ffe17c] shrink-0">
             <div className="pr-4 overflow-hidden">
               {title && (
                 typeof title === 'string' ? (
-                  <h2 className="text-lg font-semibold text-zinc-100 truncate">{title}</h2>
+                  <h2 className="font-heading text-xl font-extrabold text-black truncate">{title}</h2>
                 ) : (
                   title
                 )
               )}
-              {subtitle && <p className="text-xs text-zinc-400 mt-0.5 truncate">{subtitle}</p>}
+              {subtitle && <p className="text-xs text-black/80 font-bold mt-0.5 truncate">{subtitle}</p>}
             </div>
             {showCloseButton && (
               <button
                 onClick={onClose}
-                className="p-1.5 rounded-lg text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors focus:outline-none focus:ring-2 focus:ring-zinc-600"
+                className="p-1.5 rounded-lg bg-black text-[#ffe17c] border-2 border-black shadow-hard-sm hover:translate-x-0.5 hover:translate-y-0.5 transition-all cursor-pointer"
                 aria-label="Close modal"
               >
-                <X className="w-5 h-5" />
+                <X className="w-5 h-5 stroke-[2.5]" />
               </button>
             )}
           </div>
