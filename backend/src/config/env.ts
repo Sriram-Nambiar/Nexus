@@ -26,6 +26,7 @@ const envSchema = z.object({
   AI_SERVICE_URL: z.string().default('http://127.0.0.1:1234'),
   AI_SERVICE_TIMEOUT_MS: z.coerce.number().int().positive().default(180000),
   AI_SERVICE_API_KEY: z.string().optional().default('lm-studio'),
+  AI_MOCK_FALLBACK: z
     .union([z.boolean(), z.string().transform((val) => val === 'true' || val === '1')])
     .default(false),
   LM_STUDIO_MODEL: z.string().default('gemma-4-e2b-it-qat'),

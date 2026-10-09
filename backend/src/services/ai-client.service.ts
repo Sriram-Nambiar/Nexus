@@ -327,6 +327,8 @@ Return a JSON object with this exact structure:
         'Can you explain overfitting and how to prevent it?',
         'What is the difference between supervised and unsupervised learning?',
         'How does gradient descent work?',
+      ];
+    }
     if (q.includes('os') || q.includes('process') || q.includes('deadlock')) {
       return [
         'What are the four conditions for a deadlock?',
@@ -348,8 +350,6 @@ Return a JSON object with this exact structure:
       plan: typeof data.plan === 'object' && data.plan !== null ? data.plan : { schedule: [] },
       estimated_hours_per_week: data.estimated_hours_per_week || 5,
       topics: Array.isArray(data.topics) ? data.topics : [],
-    };
-  }
     };
   }
 
