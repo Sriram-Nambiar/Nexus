@@ -1,0 +1,59 @@
+# ==============================================================================
+# Kiwix Offspot Runtime Configuration: offspot.yaml
+# ==============================================================================
+# Place this file in the FAT32 boot partition (/boot/firmware/offspot.yaml)
+# of the flashed SD card. It will be parsed by offspot-runtime on boot.
+#
+# References:
+#   - https://github.com/offspot/offspot-config
+#   - https://github.com/offspot/overview
+# ==============================================================================
+
+# Timezone for the host system
+timezone: "UTC"
+
+# Hostname of the machine
+hostname: "nexus-hotspot"
+
+# Network configuration for Ethernet uplink (optional wired connection)
+ethernet:
+  type: "dhcp"
+
+# Wi-Fi Access Point configuration (orchestrated via hostapd & dnsmasq)
+ap:
+  # Main domain name (e.g., nexus.hotspot)
+  domain: "nexus"
+  # Top-level domain for local hotspot DNS resolution
+  tld: "hotspot"
+  # Captive portal landing domain
+  welcome: "goto.nexus"
+  # Wi-Fi Network Name visible to student laptops and phones
+  ssid: "NEXUS-Campus-WiFi"
+  # Wi-Fi Password (leave empty or omit for open campus network)
+  passphrase: ""
+  # Route clients as gateway if internet uplink is connected
+  as-gateway: false
+
+# Container orchestration definition
+containers:
+  name: "offspot"
+  services:
+    nexus:
+      image: "nexus-ai:offspot"
+      ports:
+        - "5000:5000"
+      environment:
+        - NODE_ENV=production
+        - PORT=5000
+        - HOST=0.0.0.0
+        - ENABLE_LAN_ACCESS=true
+        - BASE_URL=http://nexus.hotspot
+        - DB_PATH=/app/data/nexus.sqlite
+        - UPLOAD_DIR=/app/data/uploads
+        - OFFSPOT_INTEGRATION=true
+        - OFFSPOT_DOMAIN=nexus.hotspot
+        - KIWIX_SERVICE_URL=http://browse.hotspot
+      volumes:
+        - "/data/nexus:/app/data"
+        - "/data/content/zims:/data/zims:ro"
+        - "/boot/firmware/offspot.yaml:/boot/firmware/offspot.yaml:ro"
