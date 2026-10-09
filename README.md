@@ -2,6 +2,8 @@
 
 NEXUS AI is an autonomous, air-gapped educational platform designed to run on local campus servers and offline **Kiwix Wi-Fi hotspots**. It delivers course materials, high-performance video streaming with HTTP 206 byte-range seeking, syllabus-grounded AI assistance via LM Studio Gemma, and OpenZIM archive integration without requiring an internet connection.
 
+🌐 **Live Web Demo**: [https://frontend-six-mauve-75.vercel.app](https://frontend-six-mauve-75.vercel.app)
+
 ---
 
 ## 📸 Interface Preview
