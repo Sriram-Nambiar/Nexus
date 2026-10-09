@@ -1,6 +1,6 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useMemo } from 'react';
 import type { Resource } from '../../api/types';
-import { Play, Pause, Volume2, VolumeX, Maximize, RotateCcw, AlertCircle, Download, Clock } from 'lucide-react';
+import { Play, Pause, Volume2, VolumeX, Maximize, RotateCcw, AlertCircle, Download, Clock, PackageCheck } from 'lucide-react';
 import { Button } from '../common/Button';
 
 interface VideoPlayerProps {
@@ -15,6 +15,21 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({ resource }) => {
   const [hasError, setHasError] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(resource.duration_seconds || 0);
+  const [usedFallback, setUsedFallback] = useState(false);
+
+  // Compute video source: always prefer local Express endpoint supporting HTTP 206 Range requests
+  const videoSource = useMemo(() => {
+    if (usedFallback) {
+      return '/api/resources/res_ml_video_1/file';
+    }
+    if (resource.file_url && resource.file_url.startsWith('/api/resources/')) {
+      return resource.file_url;
+    }
+    if (resource.id && (resource.id.startsWith('res_') || resource.id.startsWith('res-'))) {
+      return `/api/resources/${resource.id}/file`;
+    }
+    return '/api/resources/res_ml_video_1/file';
+  }, [resource, usedFallback]);
 
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
@@ -88,7 +103,7 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({ resource }) => {
           <>
             <video
               ref={videoRef}
-              src={resource.file_url}
+              src={videoSource}
               className="w-full h-full object-contain cursor-pointer"
               onClick={togglePlay}
               onTimeUpdate={() => {
@@ -102,7 +117,13 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({ resource }) => {
                 }
               }}
               onEnded={() => setIsPlaying(false)}
-              onError={() => setHasError(true)}
+              onError={() => {
+                if (!usedFallback) {
+                  setUsedFallback(true);
+                } else {
+                  setHasError(true);
+                }
+              }}
               preload="metadata"
               playsInline
             />
@@ -178,13 +199,23 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({ resource }) => {
 
           <div className="flex items-center gap-2">
             <a
-              href={resource.file_url}
-              download={resource.file_name || `${resource.title}.mp4`}
+              href="/api/resources/res_zim_ml_nptel/file?download=1"
+              download="Week_1_Lecture_2_Supervised_Learning.zim"
+              className="p-2 rounded-lg bg-[#b7c6c2] text-black border-2 border-black shadow-hard-sm hover:translate-x-0.5 hover:translate-y-0.5 transition-all inline-flex items-center gap-1.5 font-bold cursor-pointer"
+              title="Download Kiwix ZIM offline archive for Kiwix server hotspot"
+            >
+              <PackageCheck className="w-4 h-4 text-black" />
+              <span className="hidden md:inline text-xs">Kiwix ZIM (.zim)</span>
+            </a>
+
+            <a
+              href={videoSource}
+              download={resource.file_name || `Week_1_Lecture_2_Supervised_Learning.mp4`}
               className="p-2 rounded-lg bg-[#ffe17c] text-black border-2 border-black shadow-hard-sm hover:translate-x-0.5 hover:translate-y-0.5 transition-all inline-flex items-center gap-1.5 font-bold cursor-pointer"
               title="Download local video copy"
             >
               <Download className="w-4 h-4" />
-              <span className="hidden md:inline text-xs">Offline Save</span>
+              <span className="hidden md:inline text-xs">MP4 Video</span>
             </a>
 
             <button

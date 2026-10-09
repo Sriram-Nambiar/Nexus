@@ -16,6 +16,7 @@ import {
   Video,
   FileCheck,
   CalendarDays,
+  Download,
 } from 'lucide-react';
 
 export const CourseDetailPage: React.FC = () => {
@@ -160,6 +161,15 @@ export const CourseDetailPage: React.FC = () => {
                 <CalendarDays className="w-4 h-4 text-black" />
                 <span>Plan Revision Schedule</span>
               </button>
+              <a
+                href="/api/resources/res_zim_ml_nptel/file?download=1"
+                download="Week_1_Lecture_2_Supervised_Learning.zim"
+                className="inline-flex items-center gap-2 py-3 px-5 rounded-xl bg-[#b7c6c2] text-black font-bold text-sm border-2 border-black shadow-hard-md hover:translate-x-0.5 hover:translate-y-0.5 transition-all cursor-pointer justify-center"
+                title="Download Kiwix ZIM archive for offline distribution hotspot"
+              >
+                <Download className="w-4 h-4 text-black" />
+                <span>Download Kiwix ZIM (.zim)</span>
+              </a>
             </div>
           </div>
         </div>
