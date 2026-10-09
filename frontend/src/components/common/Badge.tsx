@@ -50,6 +50,11 @@ export const Badge: React.FC<BadgeProps> = ({
         computedIcon = computedIcon || <Presentation className="w-3 h-3 text-black" />;
         label = label || 'Slides';
         break;
+      case 'other':
+        computedVariant = 'sage';
+        computedIcon = computedIcon || <FileText className="w-3 h-3 text-black" />;
+        label = label || 'ZIM / Asset';
+        break;
     }
   }
 

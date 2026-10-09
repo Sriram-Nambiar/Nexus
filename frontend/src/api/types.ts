@@ -1,4 +1,4 @@
-export type ResourceType = 'pdf' | 'video' | 'notes' | 'slides' | 'lab';
+export type ResourceType = 'pdf' | 'video' | 'notes' | 'slides' | 'lab' | 'other';
 
 export interface Course {
   id: string;
