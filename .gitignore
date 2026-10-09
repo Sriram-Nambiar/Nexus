@@ -13,6 +13,9 @@ uploads/
 *.sqlite-shm
 *.mp4
 *.webm
+*.zim
+*.idx
+*.idx.tmp/
 
 # Environment & credentials
 .env
