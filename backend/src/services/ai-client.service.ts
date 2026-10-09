@@ -173,9 +173,12 @@ export class AIServiceClient {
       throw new AppError('Invalid response structure received from AI service', 502);
     }
     const res = data as AIAskResponse;
+    const sources = Array.isArray(res.sources) ? res.sources : [];
     return {
       answer: String(res.answer),
-      sources: Array.isArray(res.sources) ? res.sources : [],
+      sources,
+      grounded: res.grounded !== undefined ? Boolean(res.grounded) : sources.length > 0,
+      confidence_score: res.confidence_score !== undefined ? Number(res.confidence_score) : (sources.length > 0 ? 0.92 : 0.0),
       suggested_questions: Array.isArray(res.suggested_questions) ? res.suggested_questions : [],
       metadata: typeof res.metadata === 'object' && res.metadata !== null ? res.metadata : {},
     };
@@ -186,10 +189,23 @@ export class AIServiceClient {
       throw new AppError('Invalid response structure received from AI service', 502);
     }
     const res = data as Partial<AIStudyPlanResponse>;
+    const goal = res.goal || originalReq.goal;
+    const title = res.title || originalReq.title || `Study Plan for ${goal}`;
+    const plan = typeof res.plan === 'object' && res.plan !== null ? res.plan : { schedule: [] };
+    const days = Array.isArray(res.days) ? res.days : (Array.isArray((plan as any).days) ? (plan as any).days : []);
+
     return {
-      title: res.title || originalReq.title || `Study Plan for ${originalReq.goal}`,
-      goal: res.goal || originalReq.goal,
-      plan: typeof res.plan === 'object' && res.plan !== null ? res.plan : { schedule: [] },
+      id: res.id,
+      title,
+      goal,
+      course_ids: res.course_ids || originalReq.course_ids || (originalReq.course_id ? [originalReq.course_id] : []),
+      course_names: res.course_names || [goal],
+      created_at: res.created_at || new Date().toISOString(),
+      total_days: res.total_days || days.length || originalReq.days_count || (originalReq.duration_weeks ? originalReq.duration_weeks * 7 : 4),
+      total_hours: res.total_hours || (originalReq.hours_per_day ? (originalReq.days_count || 4) * originalReq.hours_per_day : 12),
+      days,
+      summary: res.summary || `Personalized study plan for ${goal}.`,
+      plan,
       estimated_hours_per_week: res.estimated_hours_per_week || 5,
       topics: Array.isArray(res.topics) ? res.topics : [],
     };

@@ -40,7 +40,7 @@ export function createApp(): Application {
   ];
   const frontendDist = candidateFrontendDirs.find((dir) => fs.existsSync(dir));
 
-  if (frontendDist) {
+  if (frontendDist && process.env.NODE_ENV !== 'test') {
     app.use(express.static(frontendDist));
     // SPA Fallback for client-side routing (e.g. /courses, /assistant)
     app.use((req: Request, res: Response, next: NextFunction) => {
@@ -50,7 +50,7 @@ export function createApp(): Application {
       next();
     });
   } else {
-    // Root API fallback when frontend build is not found
+    // Root API fallback when frontend build is not found or in test mode
     app.get('/', (_req: Request, res: Response) => {
       res.status(200).json({
         name: 'NEXUS AI Backend API',

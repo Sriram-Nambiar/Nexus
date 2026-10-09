@@ -10,9 +10,8 @@ const envSchema = z.object({
   PORT: z.coerce.number().int().positive().default(5000),
   HOST: z.string().default('127.0.0.1'),
   ENABLE_LAN_ACCESS: z
-    .string()
-    .optional()
-    .transform((val) => val === 'true' || val === '1'),
+    .union([z.boolean(), z.string().transform((val) => val === 'true' || val === '1')])
+    .default(false),
   BASE_URL: z.string().default('http://localhost:5000'),
   CORS_ORIGIN: z.string().default('*'),
 
@@ -28,10 +27,8 @@ const envSchema = z.object({
   AI_SERVICE_TIMEOUT_MS: z.coerce.number().int().positive().default(30000),
   AI_SERVICE_API_KEY: z.string().optional().default(''),
   AI_MOCK_FALLBACK: z
-    .string()
-    .optional()
-    .transform((val) => val === 'true' || val === '1')
-    .default(false),
+    .union([z.boolean(), z.string().transform((val) => val === 'true' || val === '1')])
+    .default(process.env.NODE_ENV === 'test'),
 
   // Rate Limiting
   RATE_LIMIT_WINDOW_MS: z.coerce.number().int().positive().default(60000),

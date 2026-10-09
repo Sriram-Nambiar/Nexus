@@ -60,28 +60,49 @@ export interface AIAskResponse {
     course_id?: string;
     resource_id?: string;
     title?: string;
+    resource_title?: string;
     snippet?: string;
+    passage?: string;
+    page?: number;
+    page_number?: number;
+    resource_type?: string;
+    file_url?: string;
   }>;
+  grounded?: boolean;
+  confidence_score?: number;
   suggested_questions?: string[];
   metadata?: Record<string, unknown>;
 }
 
 export interface AIStudyPlanRequest {
   goal: string;
+  topic_or_goal?: string;
   title?: string;
   course_id?: string;
+  course_ids?: string[];
+  days_count?: number;
+  hours_per_day?: number;
   duration_weeks?: number;
   preferences?: Record<string, unknown>;
   save?: boolean;
 }
 
 export interface AIStudyPlanResponse {
+  id?: string;
   title: string;
   goal: string;
+  course_ids?: string[];
+  course_names?: string[];
+  created_at?: string;
+  total_days?: number;
+  total_hours?: number;
+  days?: any[];
+  summary?: string;
   plan: Record<string, unknown>;
   estimated_hours_per_week?: number;
   topics?: string[];
   study_plan_id?: string;
+  saved?: boolean;
 }
 
 // Search result structures

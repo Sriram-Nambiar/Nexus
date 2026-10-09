@@ -71,12 +71,23 @@ def format_sources(
 
         seen.add(key)
 
+        page = chunk.get("page")
+        passage = chunk.get("text", "").strip()[:400]
+        ext_is_pdf = title.lower().endswith(".pdf") or "lecture" in title.lower() or "notes" in title.lower()
+        res_type = "pdf" if ext_is_pdf else "document"
+
         sources.append(
             {
                 "course_id": course_id,
                 "resource_id": resource_id,
                 "title": title,
+                "resource_title": title,
                 "snippet": snippet,
+                "passage": passage,
+                "page": page,
+                "page_number": page,
+                "resource_type": res_type,
+                "file_url": f"/api/resources/{resource_id}/file",
             }
         )
 

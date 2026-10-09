@@ -52,7 +52,16 @@ export const AdminResourcesPage: React.FC = () => {
   };
 
   useEffect(() => {
-    fetchStatus();
+    let isMounted = true;
+    getOffspotStatus()
+      .then((data) => {
+        if (isMounted) setOffspotData(data);
+      })
+      .catch((err) => console.error('Failed to fetch offspot status:', err));
+
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   useEffect(() => {

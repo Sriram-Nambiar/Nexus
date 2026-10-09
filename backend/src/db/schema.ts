@@ -1,6 +1,6 @@
-import Database from 'better-sqlite3';
+import { AppDatabase } from './database';
 
-export function initializeSchema(db: Database.Database): void {
+export function initializeSchema(db: AppDatabase): void {
   // Enforce foreign key constraints
   db.pragma('foreign_keys = ON');
 

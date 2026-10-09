@@ -41,11 +41,26 @@ export const aiAskSchema = z.object({
     .optional(),
 });
 
-export const aiStudyPlanSchema = z.object({
-  goal: z.string().trim().min(1, 'Study goal is required').max(500),
-  title: z.string().trim().max(200).optional(),
-  course_id: z.string().trim().optional(),
-  duration_weeks: z.coerce.number().int().min(1).max(52).optional().default(4),
-  preferences: z.record(z.string(), z.unknown()).optional(),
-  save: z.boolean().optional().default(true),
-});
+export const aiStudyPlanSchema = z
+  .object({
+    goal: z.string().trim().max(1000).optional(),
+    topic_or_goal: z.string().trim().max(1000).optional(),
+    title: z.string().trim().max(200).optional(),
+    course_id: z.string().trim().optional(),
+    course_ids: z.array(z.string()).optional(),
+    days_count: z.coerce.number().int().min(1).max(365).optional(),
+    hours_per_day: z.coerce.number().min(1).max(24).optional(),
+    duration_weeks: z.coerce.number().int().min(1).max(52).optional().default(4),
+    preferences: z.record(z.string(), z.unknown()).optional(),
+    save: z.boolean().optional().default(true),
+  })
+  .refine(
+    (data) => Boolean((data.goal && data.goal.length > 0) || (data.topic_or_goal && data.topic_or_goal.length > 0)),
+    { message: 'Study goal is required', path: ['goal'] }
+  )
+  .transform((data) => ({
+    ...data,
+    goal: (data.goal || data.topic_or_goal || 'Study Plan').trim(),
+    course_id: data.course_id || (data.course_ids && data.course_ids[0]) || undefined,
+    course_ids: data.course_ids || (data.course_id ? [data.course_id] : []),
+  }));
