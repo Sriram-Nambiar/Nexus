@@ -3,8 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import type { Course } from '../api/types';
 import { getCourses } from '../api';
 import { useApp } from '../context';
-import { Card } from '../components/common/Card';
-import { Button } from '../components/common/Button';
 import { Badge } from '../components/common/Badge';
 import { SearchInput } from '../components/common/SearchInput';
 import { LoadingSpinner } from '../components/common/LoadingSpinner';
@@ -16,6 +14,7 @@ import {
   Filter,
   Bot,
   AlertCircle,
+  Layers,
 } from 'lucide-react';
 
 export const CoursesPage: React.FC = () => {
@@ -85,150 +84,146 @@ export const CoursesPage: React.FC = () => {
   };
 
   if (isLoading) {
-    return <LoadingSpinner label="Loading course catalog..." className="min-h-[60vh]" />;
+    return <LoadingSpinner label="Loading campus course catalog..." className="min-h-[60vh]" />;
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-8 space-y-6">
-      {/* Page Title & Search Bar */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div>
-          <h2 className="text-xl sm:text-2xl font-bold text-white tracking-tight">
-            Course Library
-          </h2>
-          <p className="text-xs text-zinc-400 mt-1">
-            Browse and access locally indexed curriculum modules and educational files.
-          </p>
+    <div className="min-h-screen bg-[#171e19] py-8 px-4 sm:px-8">
+      <div className="max-w-7xl mx-auto space-y-8">
+        {/* Banner: Neo-Brutalist #ffe17c with Radial Dots */}
+        <div className="bg-radial-dots border-2 border-black rounded-2xl p-6 sm:p-8 shadow-hard-lg">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+            <div className="space-y-2">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-black text-[#ffe17c] text-xs font-bold border-2 border-black shadow-hard-sm">
+                <Layers className="w-3.5 h-3.5" />
+                <span>OFFLINE REPOSITORY</span>
+              </div>
+              <h1 className="font-heading text-3xl sm:text-5xl font-extrabold text-black tracking-tight">
+                Course Catalog & Lectures
+              </h1>
+              <p className="text-sm sm:text-base text-black/85 font-medium max-w-2xl leading-relaxed">
+                Stream verified university courses with instant HTTP Range video scrubbing and in-browser PDF lecture notes.
+              </p>
+            </div>
+
+            <div className="w-full md:w-80">
+              <div className="bg-white border-2 border-black rounded-xl p-1 shadow-hard-md">
+                <SearchInput
+                  value={searchTerm}
+                  onChange={setSearchTerm}
+                  placeholder="Search code, title, instructor..."
+                />
+              </div>
+            </div>
+          </div>
         </div>
 
-        <div className="w-full md:w-80">
-          <SearchInput
-            value={searchTerm}
-            onChange={setSearchTerm}
-            placeholder="Search by course code, title, or instructor..."
-          />
-        </div>
-      </div>
+        {error && (
+          <div className="p-4 rounded-xl bg-[#f4f4f5] border-2 border-black text-black text-xs font-bold flex items-center gap-3 shadow-hard-sm">
+            <AlertCircle className="w-4 h-4 shrink-0 text-red-600" />
+            <span>Notice: {error}. Displaying locally cached curriculum assets.</span>
+          </div>
+        )}
 
-      {error && (
-        <div className="p-4 rounded-xl bg-rose-950/40 border border-rose-800/60 text-rose-200 text-xs flex items-center gap-3">
-          <AlertCircle className="w-4 h-4 shrink-0 text-rose-400" />
-          <span>Notice: {error}. Loaded local catalog snapshot.</span>
-        </div>
-      )}
-
-      {/* Department Filter Chips */}
-      <div className="flex items-center gap-2 overflow-x-auto pb-1 text-xs">
-        <span className="text-zinc-500 flex items-center gap-1 shrink-0 font-medium mr-1">
-          <Filter className="w-3.5 h-3.5" /> Department:
-        </span>
-        {departments.map((dept) => (
-          <button
-            key={dept}
-            onClick={() => setSelectedDept(dept)}
-            className={`px-3 py-1 rounded-lg font-medium transition-colors whitespace-nowrap ${
-              selectedDept === dept
-                ? 'bg-zinc-100 text-zinc-950 shadow-sm'
-                : 'bg-zinc-900 text-zinc-400 hover:text-zinc-200 border border-zinc-800'
-            }`}
-          >
-            {dept}
-          </button>
-        ))}
-      </div>
-
-      {/* Courses Cards Grid */}
-      {filteredCourses.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-          {filteredCourses.map((course) => (
-            <Card
-              key={course.id}
-              hoverable
-              className="p-5 flex flex-col justify-between cursor-pointer group"
-              onClick={() => handleOpenCourse(course)}
+        {/* Department Filter Chips */}
+        <div className="flex items-center gap-2 overflow-x-auto pb-2 text-xs">
+          <span className="text-[#b7c6c2] flex items-center gap-1.5 shrink-0 font-bold mr-1">
+            <Filter className="w-4 h-4 text-[#ffe17c]" /> Filter:
+          </span>
+          {departments.map((dept) => (
+            <button
+              key={dept}
+              onClick={() => setSelectedDept(dept)}
+              className={`px-4 py-2 rounded-xl font-bold border-2 border-black transition-all cursor-pointer whitespace-nowrap ${
+                selectedDept === dept
+                  ? 'bg-[#ffe17c] text-black shadow-hard-sm translate-x-0.5 translate-y-0.5'
+                  : 'bg-white text-black hover:bg-[#b7c6c2] shadow-hard-sm'
+              }`}
             >
-              <div>
-                {/* Course Header */}
-                <div className="flex items-start justify-between gap-3 mb-3">
-                  <div>
-                    <span className="text-xs font-mono font-bold px-2.5 py-0.5 rounded bg-zinc-800 text-zinc-200 border border-zinc-700">
-                      {course.code}
-                    </span>
-                    <span className="text-[11px] text-zinc-400 font-mono ml-2">
-                      {course.semester}
-                    </span>
-                  </div>
-
-                  <span className="text-[11px] font-mono text-zinc-400 bg-zinc-900 px-2 py-0.5 rounded border border-zinc-800">
-                    {course.resource_count} materials
-                  </span>
-                </div>
-
-                <h3 className="text-base font-semibold text-zinc-100 group-hover:text-white mb-2 leading-snug">
-                  {course.title}
-                </h3>
-
-                <p className="text-xs text-zinc-400 line-clamp-3 mb-4 leading-relaxed">
-                  {course.description}
-                </p>
-
-                {/* Resource Types Badges */}
-                <div className="flex flex-wrap gap-1.5 mb-4">
-                  {course.resource_types.map((type) => (
-                    <Badge key={type} resourceType={type} size="sm" />
-                  ))}
-                </div>
-              </div>
-
-              {/* Course Footer */}
-              <div className="pt-3 border-t border-zinc-800/80 flex items-center justify-between mt-2 text-xs">
-                {course.instructor ? (
-                  <div className="flex items-center gap-1.5 text-zinc-400 truncate max-w-[160px]">
-                    <User className="w-3.5 h-3.5 text-zinc-500 shrink-0" />
-                    <span className="truncate">{course.instructor}</span>
-                  </div>
-                ) : (
-                  <span className="text-zinc-500 font-mono text-[11px]">{course.department}</span>
-                )}
-
-                <div className="flex items-center gap-2">
-                  <button
-                    onClick={(e) => handleAskAIAboutCourse(e, course)}
-                    className="p-1.5 rounded-lg text-purple-400 hover:text-purple-300 hover:bg-zinc-800 transition-colors"
-                    title={`Ask AI questions about ${course.code}`}
-                    aria-label={`Ask AI about ${course.code}`}
-                  >
-                    <Bot className="w-4 h-4" />
-                  </button>
-                  <Button
-                    variant="secondary"
-                    size="sm"
-                    rightIcon={<ArrowRight className="w-3.5 h-3.5" />}
-                    className="py-1 px-2.5 text-xs"
-                  >
-                    View
-                  </Button>
-                </div>
-              </div>
-            </Card>
+              {dept}
+            </button>
           ))}
         </div>
-      ) : (
-        <EmptyState
-          icon={<BookOpen className="w-8 h-8" />}
-          title="No courses found"
-          description={
-            searchTerm
-              ? `No courses matching "${searchTerm}". Try searching for course code like CS-301 or keywords like Operating Systems.`
-              : 'No courses available in this category.'
-          }
-          actionLabel="Clear Filters"
-          onAction={() => {
-            setSearchTerm('');
-            setSelectedDept('All');
-          }}
-        />
-      )}
+
+        {/* Courses Cards Grid */}
+        {filteredCourses.length > 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filteredCourses.map((course) => (
+              <div
+                key={course.id}
+                onClick={() => handleOpenCourse(course)}
+                className="group bg-white border-2 border-black rounded-xl p-6 shadow-hard-md hover:shadow-hard-lg hover:translate-x-0.5 hover:translate-y-0.5 transition-all cursor-pointer flex flex-col justify-between"
+              >
+                <div>
+                  {/* Top Bar: Code & Resource Count */}
+                  <div className="flex items-start justify-between gap-3 mb-4">
+                    <span className="font-mono font-bold text-xs bg-black text-[#ffe17c] px-3 py-1 rounded-lg border-2 border-black shadow-hard-sm">
+                      {course.code}
+                    </span>
+                    <span className="text-xs font-bold font-mono bg-[#b7c6c2] text-black px-2.5 py-1 rounded-lg border-2 border-black">
+                      {course.resource_count} assets
+                    </span>
+                  </div>
+
+                  <h2 className="font-heading text-xl font-extrabold text-black group-hover:text-black mb-2 leading-snug">
+                    {course.title}
+                  </h2>
+
+                  <p className="text-xs sm:text-sm text-zinc-700 font-medium line-clamp-3 mb-5 leading-relaxed">
+                    {course.description}
+                  </p>
+
+                  {/* Resource Badges */}
+                  <div className="flex flex-wrap gap-2 mb-6">
+                    {course.resource_types.map((type) => (
+                      <Badge key={type} resourceType={type} size="sm" />
+                    ))}
+                  </div>
+                </div>
+
+                {/* Footer: Instructor & Actions */}
+                <div className="pt-4 border-t-2 border-black flex items-center justify-between text-xs">
+                  <div className="flex items-center gap-1.5 text-black font-bold truncate max-w-[170px]">
+                    <User className="w-3.5 h-3.5 shrink-0" />
+                    <span className="truncate">{course.instructor || course.department}</span>
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={(e) => handleAskAIAboutCourse(e, course)}
+                      className="p-2 rounded-lg bg-[#b7c6c2] hover:bg-[#ffe17c] text-black border-2 border-black shadow-hard-sm transition-colors cursor-pointer"
+                      title={`Ask AI questions about ${course.code}`}
+                    >
+                      <Bot className="w-4 h-4" />
+                    </button>
+                    <button
+                      className="neo-btn-primary text-xs py-1.5 px-3"
+                    >
+                      <span>Study</span>
+                      <ArrowRight className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <EmptyState
+            icon={<BookOpen className="w-10 h-10 text-black" />}
+            title="No courses matched your query"
+            description={
+              searchTerm
+                ? `No courses matching "${searchTerm}". Try searching for course code like CS-301 or keywords like Operating Systems.`
+                : 'No courses available in this category.'
+            }
+            actionLabel="Reset Search"
+            onAction={() => {
+              setSearchTerm('');
+              setSelectedDept('All');
+            }}
+          />
+        )}
+      </div>
     </div>
   );
 };
